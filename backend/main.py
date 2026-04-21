@@ -37,7 +37,7 @@ app = FastAPI(
 ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://localhost:5173",
-    "https://otto-whisper.vercel.app",
+    "https://otto-whisper.netlify.app",
     "https://otto.drdariohart.com",
     "https://ottopwa.vercel.app",
 ]
@@ -58,7 +58,7 @@ app.add_middleware(
 @app.middleware("http")
 async def add_iframe_headers(request: Request, call_next):
     response = await call_next(request)
-    response.headers["X-Frame-Options"] = "ALLOW-FROM https://otto.drdariohart.com"
+    response.headers["X-Frame-Options"] = "ALLOW-FROM https://ottopwa.vercel.app"
     response.headers["Content-Security-Policy"] = (
         "frame-ancestors 'self' https://otto.drdariohart.com https://ottopwa.vercel.app"
     )
