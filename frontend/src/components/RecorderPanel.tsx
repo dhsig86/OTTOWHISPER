@@ -4,6 +4,8 @@ import type { RecorderState } from '../types/whisper'
 interface RecorderPanelProps {
   state: RecorderState
   elapsedSeconds: number
+  chunkCount?: number
+  currentChunkMB?: number
   onStart: () => void
   onPause: () => void
   onResume: () => void
@@ -29,7 +31,8 @@ const STATE_LABELS: Record<RecorderState, string> = {
 }
 
 export default function RecorderPanel({
-  state, elapsedSeconds, onStart, onPause, onResume, onStop, onReset,
+  state, elapsedSeconds, chunkCount = 0, currentChunkMB = 0,
+  onStart, onPause, onResume, onStop, onReset,
 }: RecorderPanelProps) {
   const isRecording = state === 'recording'
   const isPaused    = state === 'paused'
@@ -62,6 +65,31 @@ export default function RecorderPanel({
           {formatTime(elapsedSeconds)}
         </span>
         <p className="text-sm text-otto-muted mt-2">{STATE_LABELS[state]}</p>
+
+        {/* Indicador de tamanho e chunks — aparece durante gravação */}
+        {isActive && (
+          <div className="flex items-center justify-center gap-3 mt-3">
+            {/* Barra de uso do chunk atual */}
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-1.5 bg-otto-border rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    currentChunkMB > 22 ? 'bg-red-500' : 'bg-otto-primary'
+                  }`}
+                  style={{ width: `${Math.min((currentChunkMB / 24.5) * 100, 100)}%` }}
+                />
+              </div>
+              <span className="text-xs text-otto-muted">
+                {currentChunkMB.toFixed(1)} MB
+              </span>
+            </div>
+            {chunkCount > 0 && (
+              <span className="text-xs bg-otto-light text-otto-dark px-2 py-0.5 rounded-full font-medium">
+                {chunkCount} segmento{chunkCount > 1 ? 's' : ''} salvo{chunkCount > 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Barra de ondas animada (decorativa durante gravação) */}

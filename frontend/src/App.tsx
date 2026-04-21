@@ -197,6 +197,8 @@ export default function App() {
             <RecorderPanel
               state={recorderState}
               elapsedSeconds={recorder.elapsedSeconds}
+              chunkCount={recorder.chunkCount}
+              currentChunkMB={recorder.currentChunkMB}
               onStart={recorder.start}
               onPause={recorder.pause}
               onResume={recorder.resume}
