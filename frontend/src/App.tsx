@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Mic2, History, X } from 'lucide-react'
+import { Mic2, History, X, Upload } from 'lucide-react'
 import { useRecorder } from './hooks/useRecorder'
 import { useTranscription } from './hooks/useTranscription'
 import ConsentBanner, { useConsent } from './components/ConsentBanner'
 import RecorderPanel from './components/RecorderPanel'
+import AudioUploader from './components/AudioUploader'
 import TranscriptView from './components/TranscriptView'
 import SummaryCard from './components/SummaryCard'
 import ExportBar from './components/ExportBar'
@@ -16,9 +17,12 @@ function getDoctorId(): string {
   return params.get('doctorId') ?? 'demo-doctor'
 }
 
+type InputMode = 'record' | 'upload'
+
 export default function App() {
   const { consentGiven, giveConsent } = useConsent()
   const [showHistory, setShowHistory] = useState(false)
+  const [inputMode, setInputMode] = useState<InputMode>('record')
 
   const [, setSessionId] = useState<string>('')
   const [segments, setSegments] = useState<TranscriptSegment[]>([])
@@ -74,6 +78,29 @@ export default function App() {
     setApiError(null)
   }
 
+  // Upload de arquivo de celular → mesma pipeline de transcrição
+  const handleFileUpload = async (blob: Blob, filename: string) => {
+    setApiError(null)
+    setSegments([])
+    setSummary(null)
+
+    // Cria um File com o nome original para o backend identificar o formato
+    const file = new File([blob], filename, { type: blob.type || 'audio/mpeg' })
+    const result = await transcription.transcribeAudio(file, doctorId)
+    if (!result) {
+      setApiError(transcription.transcribeError ?? 'Erro na transcrição do arquivo')
+      return
+    }
+    setSessionId(result.session_id)
+    setSegments(result.segments)
+
+    const sumResult = await transcription.summarize(result.session_id, result.full_transcript)
+    if (sumResult) {
+      setSummary(sumResult.summary)
+      setCidSugerido(sumResult.cid_sugerido)
+    }
+  }
+
   const isProcessing = transcription.isTranscribing || transcription.isSummarizing
   const isDone = segments.length > 0
   const fullTranscript = segments.map(s => `${s.speaker}: ${s.text}`).join('\n')
@@ -98,18 +125,20 @@ export default function App() {
             </div>
           </div>
 
-          {/* Botão de histórico */}
-          <button
-            onClick={() => setShowHistory(p => !p)}
-            className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl transition-colors ${
-              showHistory
-                ? 'bg-otto-primary text-white'
-                : 'bg-otto-light text-otto-dark hover:bg-otto-border'
-            }`}
-          >
-            {showHistory ? <X size={14} /> : <History size={14} />}
-            {showHistory ? 'Fechar' : 'Histórico'}
-          </button>
+          {/* Ações do header */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowHistory(p => !p)}
+              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl transition-colors ${
+                showHistory
+                  ? 'bg-otto-primary text-white'
+                  : 'bg-otto-light text-otto-dark hover:bg-otto-border'
+              }`}
+            >
+              {showHistory ? <X size={14} /> : <History size={14} />}
+              {showHistory ? 'Fechar' : 'Histórico'}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -135,7 +164,36 @@ export default function App() {
               </div>
             )}
 
+            {/* Toggle Gravar / Enviar arquivo */}
+            {!isDone && !isProcessing && recorder.state === 'idle' && (
+              <div className="flex bg-otto-light rounded-xl p-1 gap-1">
+                <button
+                  onClick={() => setInputMode('record')}
+                  className={`flex-1 flex items-center justify-center gap-2 text-xs font-semibold py-2 rounded-lg transition-colors ${
+                    inputMode === 'record'
+                      ? 'bg-white text-otto-primary shadow-sm'
+                      : 'text-otto-muted hover:text-otto-dark'
+                  }`}
+                >
+                  <Mic2 size={13} />
+                  Gravar consulta
+                </button>
+                <button
+                  onClick={() => setInputMode('upload')}
+                  className={`flex-1 flex items-center justify-center gap-2 text-xs font-semibold py-2 rounded-lg transition-colors ${
+                    inputMode === 'upload'
+                      ? 'bg-white text-otto-primary shadow-sm'
+                      : 'text-otto-muted hover:text-otto-dark'
+                  }`}
+                >
+                  <Upload size={13} />
+                  Enviar arquivo
+                </button>
+              </div>
+            )}
+
             {/* Recorder */}
+            {inputMode === 'record' && (
             <RecorderPanel
               state={recorderState}
               elapsedSeconds={recorder.elapsedSeconds}
@@ -145,6 +203,15 @@ export default function App() {
               onStop={recorder.stop}
               onReset={handleReset}
             />
+            )}
+
+            {/* Upload de arquivo de celular */}
+            {inputMode === 'upload' && !isDone && (
+              <AudioUploader
+                onAudioReady={handleFileUpload}
+                disabled={isProcessing}
+              />
+            )}
 
             {/* Progresso SSE */}
             {transcription.progress && (

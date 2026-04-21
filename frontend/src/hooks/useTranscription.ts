@@ -54,8 +54,11 @@ export function useTranscription(): UseTranscriptionReturn {
     abortRef.current = controller
 
     const formData = new FormData()
-    const ext = blob.type.includes('webm') ? 'webm' : 'mp4'
-    formData.append('audio_file', blob, `consulta.${ext}`)
+    // Se for File (upload de celular), preserva nome original; senão nomeia como consulta gravada
+    const filename = blob instanceof File
+      ? blob.name
+      : blob.type.includes('webm') ? 'consulta.webm' : 'consulta.mp4'
+    formData.append('audio_file', blob, filename)
     formData.append('doctor_id', doctorId)
     if (patientId) formData.append('patient_id', patientId)
     formData.append('language', 'pt')

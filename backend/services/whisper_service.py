@@ -18,6 +18,35 @@ WHISPER_MAX_BYTES = 25 * 1024 * 1024
 # Modelo a usar
 WHISPER_MODEL = "whisper-1"
 
+# Formatos suportados nativamente pelo Whisper API
+WHISPER_SUPPORTED = {".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm", ".ogg", ".flac"}
+
+
+def normalize_audio(audio_bytes: bytes, filename: str) -> tuple[bytes, str]:
+    """
+    Converte formatos não suportados pelo Whisper (ex: .3gp, .amr) para .mp3 via pydub.
+    Retorna (bytes_convertido, novo_filename).
+    Se o formato já for suportado, retorna os bytes originais sem conversão.
+    """
+    suffix = Path(filename).suffix.lower()
+    if suffix in WHISPER_SUPPORTED:
+        return audio_bytes, filename
+
+    try:
+        from pydub import AudioSegment
+        import io
+
+        fmt = suffix.lstrip(".")
+        audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format=fmt)
+        out = io.BytesIO()
+        audio.export(out, format="mp3")
+        new_name = Path(filename).stem + ".mp3"
+        return out.getvalue(), new_name
+    except Exception as e:
+        # Se pydub não conseguir converter, tenta enviar mesmo assim (Whisper pode aceitar)
+        print(f"[OTTO Whisper] Aviso: conversão de {suffix} falhou ({e}), enviando original")
+        return audio_bytes, filename
+
 
 def get_openai_client() -> OpenAI:
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -41,6 +70,10 @@ def transcribe_audio(
     Lida com arquivos maiores que 25MB fazendo split em chunks.
     """
     client = get_openai_client()
+
+    # Converte formatos de celular não suportados (3gp, amr) para mp3
+    audio_bytes, filename = normalize_audio(audio_bytes, filename)
+
     size = len(audio_bytes)
 
     if size > WHISPER_MAX_BYTES:
