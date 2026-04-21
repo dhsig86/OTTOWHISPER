@@ -1,0 +1,32 @@
+# Node
+node_modules/
+dist/
+.env
+*.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Áudio — nunca commitar gravações de pacientes
+*.webm
+*.mp3
+*.mp4
+*.m4a
+*.wav
+*.ogg
+
+# Firebase — chaves nunca no git
+*firebase*adminsdk*.json
