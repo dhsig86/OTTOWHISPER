@@ -16,7 +16,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "ALLOW-FROM https://otto.drdariohart.com"
+    X-Frame-Options = "ALLOW-FROM https://ottopwa.vercel.app"
     Content-Security-Policy = "frame-ancestors 'self' https://otto.drdariohart.com https://ottopwa.vercel.app"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
