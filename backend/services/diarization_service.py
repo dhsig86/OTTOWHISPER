@@ -45,10 +45,18 @@ def _get_pipeline():
         return None
 
     try:
-        _pipeline = PyannotePipeline.from_pretrained(
-            "pyannote/speaker-diarization-3.1",
-            use_auth_token=token,
-        )
+        # Tenta parâmetro novo 'token' (huggingface_hub >= 0.20)
+        # Fallback para 'use_auth_token' se versão antiga
+        try:
+            _pipeline = PyannotePipeline.from_pretrained(
+                "pyannote/speaker-diarization-3.1",
+                token=token,
+            )
+        except TypeError:
+            _pipeline = PyannotePipeline.from_pretrained(
+                "pyannote/speaker-diarization-3.1",
+                use_auth_token=token,
+            )
         logger.info("Pipeline pyannote carregado com sucesso")
         return _pipeline
     except Exception as e:
