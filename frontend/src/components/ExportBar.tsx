@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import { Copy, Check, ExternalLink, FileText } from 'lucide-react'
-import type { ClinicalSummary, TranscriptSegment } from '../types/whisper'
+import type { ClinicalSummary } from '../types/whisper'
 
 interface ExportBarProps {
   fullTranscript: string
   summary: ClinicalSummary | null
-  segments: TranscriptSegment[]
-  sessionId?: string
 }
 
 function buildPlainText(transcript: string, summary: ClinicalSummary | null): string {
@@ -50,7 +48,7 @@ function buildCasesUrl(transcript: string, summary: ClinicalSummary | null): str
   return `${base}?draft=${encodeURIComponent(payload)}`
 }
 
-export default function ExportBar({ fullTranscript, summary, segments, sessionId }: ExportBarProps) {
+export default function ExportBar({ fullTranscript, summary }: ExportBarProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {

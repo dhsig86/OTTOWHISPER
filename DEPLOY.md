@@ -3,7 +3,7 @@
 ## Stack de produção
 | Camada | Serviço |
 |---|---|
-| Frontend | Vercel |
+| Frontend | **Netlify** |
 | Backend (FastAPI) | Google Cloud Run |
 | Banco de dados | Firebase Firestore |
 
@@ -24,21 +24,21 @@ git push -u origin main
 
 ---
 
-## 2. Frontend → Vercel
+## 2. Frontend → Netlify
 
-1. Acesse [vercel.com](https://vercel.com) → "Add New Project"
-2. Importe o repositório `dhsig86/OTTOWHISPER`
-3. Configure:
-   - **Root Directory:** `frontend`
-   - **Framework Preset:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-4. Variáveis de ambiente:
+1. Acesse [netlify.com](https://netlify.com) → "Add new site" → "Import an existing project"
+2. Conecte o GitHub e importe `dhsig86/OTTOWHISPER`
+3. As configurações de build são detectadas automaticamente pelo `netlify.toml`:
+   - **Base directory:** `frontend`
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+4. Variáveis de ambiente (Site Settings → Environment Variables):
    ```
    VITE_API_URL = https://SEU-SERVICO.run.app/api
    ```
    *(preencher após criar o Cloud Run no passo 3)*
-5. Deploy → anote a URL gerada (ex: `otto-whisper.vercel.app`)
+5. Deploy → anote a URL gerada (ex: `otto-whisper.netlify.app`)
+6. Opcional: configurar domínio customizado em Domain Settings
 
 ---
 

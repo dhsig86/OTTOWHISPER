@@ -184,8 +184,6 @@ export default function App() {
               <ExportBar
                 fullTranscript={fullTranscript}
                 summary={summary}
-                segments={segments}
-                sessionId={sessionId}
               />
             )}
 
