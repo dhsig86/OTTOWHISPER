@@ -80,35 +80,43 @@ export function useTranscription(): UseTranscriptionReturn {
       let buffer = ''
       let result: TranscribeResponse | null = null
 
-      // Parse SSE line-by-line
+      // currentEvent persiste FORA do parseSSE para sobreviver entre chunks
+      // (JSON grande pode chegar em múltiplos reads — o tipo do evento não pode ser perdido)
+      let currentEvent = ''
+      let dataBuffer = ''  // acumula linhas data: fragmentadas
+
       const parseSSE = (chunk: string) => {
         buffer += chunk
         const lines = buffer.split('\n')
-        buffer = lines.pop() ?? ''
+        buffer = lines.pop() ?? ''  // guarda linha incompleta para próximo chunk
 
-        let currentEvent = ''
         for (const line of lines) {
           if (line.startsWith('event: ')) {
             currentEvent = line.slice(7).trim()
+            dataBuffer = ''
           } else if (line.startsWith('data: ')) {
-            const raw = line.slice(6).trim()
-            try {
-              const data = JSON.parse(raw)
-              if (currentEvent === 'progress') {
-                setProgress(data as TranscribeProgress)
-              } else if (currentEvent === 'result') {
-                result = data as TranscribeResponse
-              } else if (currentEvent === 'error') {
-                throw new Error(data.message ?? 'Erro na transcrição')
+            dataBuffer += line.slice(6)
+          } else if (line === '') {
+            // Linha em branco = fim do evento SSE → processa
+            if (dataBuffer) {
+              try {
+                const data = JSON.parse(dataBuffer)
+                if (currentEvent === 'progress') {
+                  setProgress(data as TranscribeProgress)
+                } else if (currentEvent === 'result') {
+                  result = data as TranscribeResponse
+                } else if (currentEvent === 'error') {
+                  throw new Error(data.message ?? 'Erro na transcrição')
+                }
+              } catch (e) {
+                if (!(e instanceof SyntaxError)) throw e
+                // SyntaxError: JSON ainda incompleto, aguarda mais chunks
               }
-            } catch (e) {
-              if (e instanceof SyntaxError) {
-                // JSON incompleto — aguarda próximo chunk
-              } else {
-                throw e
+              if (currentEvent !== 'result' || result !== null) {
+                currentEvent = ''
+                dataBuffer = ''
               }
             }
-            currentEvent = ''
           }
         }
       }
