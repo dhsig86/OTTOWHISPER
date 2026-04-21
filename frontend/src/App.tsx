@@ -20,7 +20,7 @@ export default function App() {
   const { consentGiven, giveConsent } = useConsent()
   const [showHistory, setShowHistory] = useState(false)
 
-  const [sessionId, setSessionId] = useState<string>('')
+  const [, setSessionId] = useState<string>('')
   const [segments, setSegments] = useState<TranscriptSegment[]>([])
   const [summary, setSummary] = useState<ClinicalSummary | null>(null)
   const [cidSugerido, setCidSugerido] = useState('')
