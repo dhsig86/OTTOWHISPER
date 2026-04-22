@@ -88,15 +88,26 @@ async def _process_audio_stream(
     Generator SSE que emite eventos de progresso enquanto processa o áudio.
     Eventos: progress → result → done | error
     """
+    import traceback
+    import logging
+    logger = logging.getLogger(__name__)
 
     def progress(step: str, pct: int, message: str):
         return sse_event("progress", {"step": step, "pct": pct, "message": message})
 
     try:
+        size_mb = len(audio_bytes) / (1024 * 1024)
+        logger.info(f"[STREAM] Iniciando: arquivo={filename} tamanho={size_mb:.1f}MB doctor={doctor_id}")
+        print(f"[STREAM] Iniciando: arquivo={filename} tamanho={size_mb:.1f}MB", flush=True)
+
         yield progress("iniciando", 5, "Iniciando processamento...")
 
-        # Etapa 1: Transcrição Whisper (rodamos em thread para não bloquear o event loop)
+        if len(audio_bytes) == 0:
+            raise ValueError("Arquivo de áudio vazio — nenhum dado recebido")
+
+        # Etapa 1: Transcrição Whisper
         yield progress("transcrevendo", 15, "Transcrevendo áudio com Whisper AI...")
+        print(f"[STREAM] Chamando Whisper para {filename}...", flush=True)
 
         loop = asyncio.get_event_loop()
         segments, duration = await loop.run_in_executor(
@@ -104,17 +115,13 @@ async def _process_audio_stream(
             lambda: transcribe_audio(audio_bytes, filename, language),
         )
 
+        print(f"[STREAM] Whisper OK: {len(segments)} segmentos, {duration:.1f}s", flush=True)
         yield progress("diarizando", 55, "Identificando falantes (Médico / Paciente)...")
 
         # Etapa 2: Diarização pyannote
-        progress_steps = []
-
-        def on_progress(step: str):
-            progress_steps.append(step)
-
         segments = await loop.run_in_executor(
             None,
-            lambda: apply_diarization(segments, audio_bytes, on_progress),
+            lambda: apply_diarization(segments, audio_bytes, lambda s: None),
         )
 
         yield progress("mesclando", 80, "Mesclando blocos de fala...")
@@ -125,6 +132,20 @@ async def _process_audio_stream(
 
         session_id = str(uuid.uuid4())
 
+        # Persiste no Firebase
+        try:
+            save_session({
+                "id": session_id,
+                "doctor_id": doctor_id,
+                "patient_id": patient_id,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "duration_seconds": round(duration, 1),
+                "full_transcript": full_transcript,
+                "segments": [s.model_dump() for s in segments],
+            })
+        except Exception as db_err:
+            print(f"[STREAM] Aviso Firebase: {db_err}", flush=True)
+
         result = TranscribeResponse(
             session_id=session_id,
             duration_seconds=round(duration, 1),
@@ -132,10 +153,14 @@ async def _process_audio_stream(
             full_transcript=full_transcript,
         )
 
+        print(f"[STREAM] Concluído: session_id={session_id}", flush=True)
         yield sse_event("result", result.model_dump())
         yield sse_event("done", {"session_id": session_id})
 
     except Exception as e:
+        tb = traceback.format_exc()
+        print(f"[STREAM] ERRO: {e}\n{tb}", flush=True)
+        logger.error(f"Erro no stream de transcrição: {e}\n{tb}")
         yield sse_event("error", {"message": str(e)})
 
 
