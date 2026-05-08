@@ -7,17 +7,28 @@ interface ExportBarProps {
   summary: ClinicalSummary | null
 }
 
-function buildPlainText(transcript: string, summary: ClinicalSummary | null): string {
-  let text = `OTTO WHISPER — Transcrição de Consulta\n${'─'.repeat(40)}\n\n${transcript}`
-  if (summary) {
-    text += `\n\n${'─'.repeat(40)}\nRESUMO CLÍNICO\n${'─'.repeat(40)}\n`
-    text += `QP: ${summary.queixa_principal}\n`
-    text += `HDA: ${summary.hda}\n`
-    text += `Exame Físico: ${summary.exame_fisico}\n`
-    text += `Hipótese Diagnóstica: ${summary.hipotese_diagnostica}\n`
-    text += `Conduta: ${summary.conduta}\n`
-  }
-  return text
+// Normaliza \n literal (backslash+n) para newline real — pode vir do LLM ou SSE
+function clean(s: string): string {
+  return s.replace(/\\n/g, '\n').replace(/\\t/g, ' ').trim()
+}
+
+// Copia apenas o resumo estruturado (sem transcrição bruta)
+// Fallback para transcrição bruta se o resumo ainda não foi gerado
+function buildCopyText(transcript: string, summary: ClinicalSummary | null): string {
+  if (!summary) return clean(transcript)
+  const NAO_MENCIONADO = 'Não mencionado'
+  const lines: string[] = []
+  if (summary.queixa_principal !== NAO_MENCIONADO)
+    lines.push(`QP: ${clean(summary.queixa_principal)}`)
+  if (summary.hda !== NAO_MENCIONADO)
+    lines.push(`HDA: ${clean(summary.hda)}`)
+  if (summary.exame_fisico !== NAO_MENCIONADO)
+    lines.push(`Exame Físico: ${clean(summary.exame_fisico)}`)
+  if (summary.hipotese_diagnostica !== NAO_MENCIONADO)
+    lines.push(`HD: ${clean(summary.hipotese_diagnostica)}`)
+  if (summary.conduta !== NAO_MENCIONADO)
+    lines.push(`Conduta: ${clean(summary.conduta)}`)
+  return lines.join('\n\n')
 }
 
 /**
@@ -52,7 +63,7 @@ export default function ExportBar({ fullTranscript, summary }: ExportBarProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
-    const text = buildPlainText(fullTranscript, summary)
+    const text = buildCopyText(fullTranscript, summary)
     await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2500)
@@ -71,7 +82,7 @@ export default function ExportBar({ fullTranscript, summary }: ExportBarProps) {
           className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-otto-light text-otto-dark hover:bg-otto-border transition-colors"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
-          {copied ? 'Copiado!' : 'Copiar texto'}
+          {copied ? 'Copiado!' : summary ? 'Copiar resumo' : 'Copiar transcrição'}
         </button>
 
         {/* ProCod — relatório médico */}
