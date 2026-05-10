@@ -85,6 +85,19 @@ export default function ExportBar({ fullTranscript, summary }: ExportBarProps) {
           {copied ? 'Copiado!' : summary ? 'Copiar resumo' : 'Copiar transcrição'}
         </button>
 
+        {/* Enviar ao PROTTO */}
+        <button
+          onClick={() => {
+            const text = buildCopyText(fullTranscript, summary);
+            window.parent.postMessage({ type: 'otto-inject-protto', text }, '*');
+          }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition-colors"
+          title="Injetar texto no rascunho do OTTO PROTTO"
+        >
+          <FileText size={13} />
+          Enviar ao PROTTO
+        </button>
+
         {/* ProCod — relatório médico */}
         <a
           href={buildProCodUrl(summary)}

@@ -24,11 +24,41 @@ export default function App() {
   const [showHistory, setShowHistory] = useState(false)
   const [inputMode, setInputMode] = useState<InputMode>('record')
 
-  const [, setSessionId] = useState<string>('')
+  const [sessionId, setSessionId] = useState<string>('')
   const [segments, setSegments] = useState<TranscriptSegment[]>([])
   const [summary, setSummary] = useState<ClinicalSummary | null>(null)
   const [cidSugerido, setCidSugerido] = useState('')
   const [apiError, setApiError] = useState<string | null>(null)
+
+  // Carrega rascunho inicial
+  useEffect(() => {
+    try {
+      const draft = window.localStorage.getItem('otto_whisper_draft')
+      if (draft) {
+        const parsed = JSON.parse(draft)
+        if (parsed.segments && parsed.segments.length > 0) {
+          setSessionId(parsed.sessionId || '')
+          setSegments(parsed.segments)
+          setSummary(parsed.summary || null)
+          setCidSugerido(parsed.cidSugerido || '')
+        }
+      }
+    } catch(e) {}
+  }, [])
+
+  // Auto-save
+  useEffect(() => {
+    if (segments.length > 0) {
+      window.localStorage.setItem('otto_whisper_draft', JSON.stringify({
+        sessionId,
+        segments,
+        summary,
+        cidSugerido
+      }))
+    } else {
+      window.localStorage.removeItem('otto_whisper_draft')
+    }
+  }, [sessionId, segments, summary, cidSugerido])
 
   const recorder = useRecorder()
   const transcription = useTranscription()
@@ -70,6 +100,11 @@ export default function App() {
   }
 
   const handleReset = () => {
+    if (segments.length > 0 || recorder.state === 'recording' || recorder.state === 'paused') {
+      if (!window.confirm("Tem certeza que deseja apagar a gravação atual? Esta ação não pode ser desfeita.")) {
+        return;
+      }
+    }
     recorder.reset()
     setSegments([])
     setSummary(null)
