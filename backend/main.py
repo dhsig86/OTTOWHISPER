@@ -9,9 +9,11 @@ import asyncio
 from datetime import datetime, timezone
 from typing import AsyncGenerator
 
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+
+from middleware.require_auth import verify_firebase_token
 
 from models.schemas import (
     TranscribeResponse,
@@ -169,9 +171,9 @@ async def _process_audio_stream(
 @app.post("/api/transcribe", response_model=TranscribeResponse)
 async def transcribe_endpoint(
     audio_file: UploadFile = File(...),
-    doctor_id: str = Form(...),
     patient_id: str = Form(None),
     language: str = Form("pt"),
+    doctor_id: str = Depends(verify_firebase_token),  # ACT-17: uid do Firebase Auth
 ):
     audio_bytes = await audio_file.read()
     if len(audio_bytes) < 1000:
@@ -219,9 +221,9 @@ async def transcribe_endpoint(
 @app.post("/api/transcribe/stream")
 async def transcribe_stream_endpoint(
     audio_file: UploadFile = File(...),
-    doctor_id: str = Form(...),
     patient_id: str = Form(None),
     language: str = Form("pt"),
+    doctor_id: str = Depends(verify_firebase_token),  # ACT-17: uid do Firebase Auth
 ):
     """
     Versão SSE de /api/transcribe.
@@ -251,7 +253,10 @@ async def transcribe_stream_endpoint(
 # ─── POST /api/summarize ─────────────────────────────────────────────────────
 
 @app.post("/api/summarize", response_model=SummarizeResponse)
-async def summarize_endpoint(body: SummarizeRequest):
+async def summarize_endpoint(
+    body: SummarizeRequest,
+    uid: str = Depends(verify_firebase_token),  # ACT-17: autenticação obrigatória
+):
     if not body.transcript.strip():
         raise HTTPException(status_code=400, detail="Transcrição vazia")
 
