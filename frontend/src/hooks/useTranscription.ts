@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
-import { apiClient } from '../services/api'
+import { apiClient, getAuthToken } from '../services/api'
 import type { TranscribeResponse, SummarizeResponse } from '../types/whisper'
+
 
 export interface TranscribeProgress {
   step: string
@@ -64,8 +65,15 @@ export function useTranscription(): UseTranscriptionReturn {
     formData.append('language', 'pt')
 
     try {
+      const token = getAuthToken()
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch(`${API_BASE}/transcribe/stream`, {
         method: 'POST',
+        headers,
         body: formData,
         signal: controller.signal,
       })

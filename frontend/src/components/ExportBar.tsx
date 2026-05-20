@@ -52,10 +52,11 @@ function buildProCodUrl(summary: ClinicalSummary | null): string {
  * Abre o OTTO Cases com a transcrição como rascunho de caso clínico.
  */
 function buildCasesUrl(transcript: string, summary: ClinicalSummary | null): string {
-  const base = 'https://cases.drdariohart.com/new'
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  const base = isDev ? 'http://localhost:5176' : 'https://otto-cases.vercel.app'
   const payload = summary
     ? `Diagnóstico: ${summary.hipotese_diagnostica}\n\n${summary.hda}`
-    : transcript.slice(0, 500)
+    : transcript.slice(0, 800)
   return `${base}?draft=${encodeURIComponent(payload)}`
 }
 

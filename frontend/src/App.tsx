@@ -17,9 +17,31 @@ function getDoctorId(): string {
   return params.get('doctorId') ?? 'demo-doctor'
 }
 
+import { setAuthToken } from './services/api'
+
 type InputMode = 'record' | 'upload'
 
 export default function App() {
+  // Listen for parent token injection (PWA Shell integration)
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'otto-context') {
+        const token = e.data?.payload?.firebaseToken
+        if (token) {
+          setAuthToken(token)
+        }
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    
+    // Notify parent shell that we are ready to receive context
+    window.parent.postMessage({ type: 'otto-whisper-ready' }, '*')
+    
+    return () => {
+      window.removeEventListener('message', handleMessage)
+    }
+  }, [])
+
   const { consentGiven, giveConsent } = useConsent()
   const [showHistory, setShowHistory] = useState(false)
   const [inputMode, setInputMode] = useState<InputMode>('record')

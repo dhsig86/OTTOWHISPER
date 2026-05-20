@@ -20,7 +20,7 @@ export function useSessions(): UseSessionsReturn {
     setError(null)
     try {
       const res = await apiClient.get<{ sessions: WhisperSession[] }>(
-        `/sessions/${doctorId}`,
+        `/sessions`,
       )
       setSessions(res.data.sessions ?? [])
     } catch (err) {

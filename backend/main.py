@@ -273,10 +273,13 @@ async def summarize_endpoint(
     return SummarizeResponse(summary=summary, cid_sugerido=cid, tokens_used=tokens)
 
 
-# ─── GET /api/sessions/{doctor_id} ───────────────────────────────────────────
+# ─── GET /api/sessions ───────────────────────────────────────────────────────
 
-@app.get("/api/sessions/{doctor_id}")
-async def list_sessions(doctor_id: str, limit: int = 20):
+@app.get("/api/sessions")
+async def list_sessions(
+    limit: int = 20,
+    doctor_id: str = Depends(verify_firebase_token),
+):
     """Lista as sessões mais recentes de um médico."""
     sessions = get_sessions_by_doctor(doctor_id, limit=limit)
     return {"sessions": sessions, "total": len(sessions)}
@@ -285,19 +288,33 @@ async def list_sessions(doctor_id: str, limit: int = 20):
 # ─── GET /api/session/{session_id} ───────────────────────────────────────────
 
 @app.get("/api/session/{session_id}")
-async def get_session_endpoint(session_id: str):
-    """Retorna uma sessão específica."""
+async def get_session_endpoint(
+    session_id: str,
+    doctor_id: str = Depends(verify_firebase_token),
+):
+    """Retorna uma sessão específica após validar ownership."""
     data = get_session(session_id)
     if not data:
         raise HTTPException(status_code=404, detail="Sessão não encontrada")
+    if data.get("doctor_id") != doctor_id:
+        raise HTTPException(status_code=403, detail="Acesso não autorizado")
     return data
 
 
 # ─── DELETE /api/session/{session_id} ────────────────────────────────────────
 
 @app.delete("/api/session/{session_id}")
-async def delete_session_endpoint(session_id: str):
-    """Remove uma sessão (direito ao esquecimento — LGPD Art. 18)."""
+async def delete_session_endpoint(
+    session_id: str,
+    doctor_id: str = Depends(verify_firebase_token),
+):
+    """Remove uma sessão (direito ao esquecimento — LGPD Art. 18) após validar ownership."""
+    data = get_session(session_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Sessão não encontrada")
+    if data.get("doctor_id") != doctor_id:
+        raise HTTPException(status_code=403, detail="Acesso não autorizado")
+    
     ok = delete_session(session_id)
     if not ok:
         raise HTTPException(status_code=500, detail="Erro ao deletar sessão")
