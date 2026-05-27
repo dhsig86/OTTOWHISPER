@@ -8,6 +8,7 @@ import json
 from openai import OpenAI
 
 from models.schemas import ClinicalSummary
+from services.orl_lexicon import get_summary_vocabulary_block
 
 SUMMARY_MODEL = "gpt-4o"
 
@@ -43,7 +44,8 @@ def summarize_transcript(
 
     client = OpenAI(api_key=api_key)
 
-    user_content = f"Especialidade: {specialty}\n\nTRANSCRIÇÃO:\n{transcript}"
+    vocab_block = get_summary_vocabulary_block()
+    user_content = f"Especialidade: {specialty}\n{vocab_block}\n\nTRANSCRIÇÃO:\n{transcript}"
 
     response = client.chat.completions.create(
         model=SUMMARY_MODEL,

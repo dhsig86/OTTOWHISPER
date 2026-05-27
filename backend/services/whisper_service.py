@@ -12,6 +12,7 @@ from typing import List
 from openai import OpenAI
 
 from models.schemas import TranscriptSegment, Speaker
+from services.orl_lexicon import get_whisper_prompt_hint
 
 # Limite da API Whisper: 25 MB
 WHISPER_MAX_BYTES = 25 * 1024 * 1024
@@ -105,6 +106,7 @@ def _transcribe_single(
                 language=language,
                 response_format="verbose_json",
                 timestamp_granularities=["segment"],
+                prompt=get_whisper_prompt_hint(),
             )
 
         segments: List[TranscriptSegment] = []
@@ -133,35 +135,50 @@ def _transcribe_chunked(
     language: str,
 ) -> tuple[List[TranscriptSegment], float]:
     """
-    Divide áudio em chunks de ~23 MB e transcreve em sequência.
-    Os timestamps são ajustados com offset acumulado.
+    Divide áudio em chunks de ~10 minutos via pydub (time-based slicing)
+    e transcreve em sequência. Cada chunk é exportado como MP3 válido,
+    evitando corrupção de containers de áudio comprimido (.webm, .mp3).
+    Os timestamps são ajustados com offset calculado pela posição temporal real.
     """
-    chunk_size = 23 * 1024 * 1024
-    num_chunks = math.ceil(len(audio_bytes) / chunk_size)
-    suffix = Path(filename).suffix or ".webm"
+    import io
+    from pydub import AudioSegment
+
+    suffix = Path(filename).suffix.lstrip(".").lower() or "webm"
+    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format=suffix)
+
+    CHUNK_DURATION_MS = 10 * 60 * 1000  # 10 minutos por chunk
+    total_len_ms = len(audio)  # duração total em ms
+    num_chunks = math.ceil(total_len_ms / CHUNK_DURATION_MS)
 
     all_segments: List[TranscriptSegment] = []
-    total_duration = 0.0
 
     for i in range(num_chunks):
-        chunk = audio_bytes[i * chunk_size : (i + 1) * chunk_size]
-        chunk_segments, chunk_duration = _transcribe_single(
-            client, chunk, f"chunk_{i}{suffix}", language
+        start_ms = i * CHUNK_DURATION_MS
+        end_ms = min((i + 1) * CHUNK_DURATION_MS, total_len_ms)
+        chunk_audio = audio[start_ms:end_ms]
+
+        # Exporta como MP3 válido com header íntegro
+        buf = io.BytesIO()
+        chunk_audio.export(buf, format="mp3")
+        chunk_bytes = buf.getvalue()
+
+        chunk_segments, _ = _transcribe_single(
+            client, chunk_bytes, f"chunk_{i}.mp3", language
         )
 
-        # Ajusta timestamps com offset
+        # Offset = posição real no áudio original (em segundos)
+        offset_s = start_ms / 1000.0
         for seg in chunk_segments:
             all_segments.append(
                 TranscriptSegment(
                     speaker=seg.speaker,
-                    start=seg.start + total_duration,
-                    end=seg.end + total_duration,
+                    start=seg.start + offset_s,
+                    end=seg.end + offset_s,
                     text=seg.text,
                 )
             )
 
-        total_duration += chunk_duration
-
+    total_duration = total_len_ms / 1000.0
     return all_segments, total_duration
 
 
