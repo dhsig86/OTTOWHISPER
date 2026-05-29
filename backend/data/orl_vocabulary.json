@@ -5,162 +5,1449 @@
     "purpose": "Vocabulário ORL para biasing de transcrição Whisper e sumarização GPT-4o"
   },
   "whisper_prompt_terms": [
-    "rinite alérgica", "rinite alérgica sazonal", "rinite alérgica perene", "febre do feno",
-    "rinite vasomotora", "rinite não alérgica", "rinite idiopática",
-    "rinite medicamentosa", "rinite de rebote",
-    "IVAS", "rinofaringite aguda", "nasofaringite aguda",
-    "influenza", "síndrome gripal",
-    "rinossinusite aguda", "ABRS", "sinusite bacteriana aguda",
-    "rinossinusite crônica", "CRS", "CRSsNP", "CRSwNP",
-    "polipose nasal", "polipose nasossinusal", "pólipo nasal",
-    "desvio de septo nasal", "desvio septal", "septoplastia",
-    "epistaxe", "hemorragia nasal",
-    "corpo estranho nasal",
-    "hipertrofia de adenoides", "adenoidectomia",
-    "fístula liquórica nasal", "rinoliquorreia", "CSF leak",
-    "tumor nasossinusal", "papiloma invertido", "carcinoma sinonasal",
-    "atresia coanal", "atresia de coanas",
-    "mucocele sinusal", "mucocele frontal", "piocele",
-    "rinossinusite fúngica", "bola fúngica", "AFRS", "mucormicose",
-    "otite média aguda", "OMA",
-    "otite externa difusa", "otite externa aguda",
-    "otite externa necrotizante", "otite externa maligna",
-    "otite média crônica", "OMC", "OMCS",
-    "colesteatoma", "timpanomastoidectomia",
-    "otomicose", "otite externa fúngica",
-    "otite média secretora", "OME", "otite média serosa",
-    "cerume impactado", "rolha de cerume",
-    "perfuração timpânica", "ruptura timpânica", "timpanoplastia",
-    "otosclerose", "otospongiose", "estapedotomia", "estapedectomia",
-    "presbiacusia", "ARHL",
-    "PAIR", "NIHL", "perda auditiva induzida por ruído",
-    "surdez súbita", "SSNHL", "hipoacusia neurossensorial súbita",
-    "doença de Ménière", "hidropsia endolinfática",
-    "VPPB", "BPPV", "canalitíase", "vertigem posicional paroxística benigna",
-    "neurite vestibular", "neuronite vestibular",
-    "labirintite",
-    "schwannoma vestibular", "neurinoma do acústico",
-    "zumbido", "tinnitus", "acúfeno",
-    "barotrauma de orelha", "barotrauma otológico",
-    "otalgia referida",
-    "paralisia facial periférica", "paralisia de Bell",
-    "síndrome de Ramsay Hunt", "herpes zóster ótico",
-    "faringite viral", "faringoamigdalite viral",
-    "faringite estreptocócica", "angina estreptocócica", "amigdalectomia",
-    "abscesso periamigdaliano", "abscesso peritonsilar",
+    "abrs",
+    "abscesso periamigdaliano",
+    "abscesso peritonsilar",
+    "abscesso retro-faríngeo",
     "abscesso retrofaríngeo",
-    "mononucleose infecciosa",
-    "herpangina",
-    "síndrome PFAPA",
-    "refluxo laringofaríngeo", "RLF",
-    "disfagia", "disfagia orofaríngea",
-    "candidose oral", "monilíase oral",
+    "acute bacterial rhinosinusitis",
+    "acute diffuse otitis externa",
+    "acute epiglottitis",
+    "acute laryngitis",
+    "acute otitis media",
+    "acúfeno",
+    "adenoid hypertrophy",
+    "adenoidectomia",
+    "adenopatia reacional",
+    "aerotite média",
+    "afrs",
+    "aftas recorrentes",
+    "allergic rhinitis",
+    "amigdalectomia",
+    "anafilaxia",
+    "anafilaxia / edema de laringe",
+    "anaphylaxis / laryngeal edema",
+    "angina estreptocócica",
+    "aos",
+    "apneia obstrutiva do sono",
+    "arhl",
+    "aspiration pneumonia",
+    "atm",
+    "atresia coanal",
+    "atresia de coanas",
+    "audiometria",
+    "barotrauma de orelha",
+    "barotrauma otológico",
+    "bell's palsy",
+    "benign paroxysmal positional vertigo",
+    "bera",
+    "bola fúngica",
+    "bppv",
+    "branchial cleft cyst",
+    "bócio multinodular",
+    "bócio nodular",
+    "canalitíase",
+    "candidose oral",
+    "candidíase oral",
+    "carcinoma de laringe",
+    "carcinoma de nasofaringe",
+    "carcinoma de orofaringe (hpv+)",
+    "carcinoma espinocelular de laringe",
+    "carcinoma espinocelular oral",
+    "carcinoma nasofaríngeo",
+    "carcinoma oral",
+    "carcinoma sinonasal",
+    "cauterização de epistaxe",
+    "cec",
+    "cec de orofaringe p16+",
+    "cec laríngeo",
+    "cec oral",
+    "cerume impactado",
+    "cervical lymph node metastasis",
+    "choanal atresia",
+    "cholesteatoma",
+    "chronic rhinosinusitis",
+    "chronic suppurative otitis media",
+    "cisto branquial",
+    "cisto branquiogênico",
+    "cisto de fenda branquial",
+    "cisto do ducto tireoglosso",
+    "cisto tireoglosso",
+    "colesteatoma",
+    "colesteatoma adquirido",
+    "colesteatoma congênito",
+    "common cold / upper respiratory tract infection",
+    "congestão de rebote nasal",
+    "coqueluche",
+    "cordite polipoide",
+    "coriza aguda",
+    "corpo estranho em fossa nasal",
+    "corpo estranho nasal",
+    "cpap",
+    "croup (laryngotracheobronchitis)",
+    "crs",
+    "crssnp",
+    "crswnp",
+    "crupe (laringotraqueobronquite)",
+    "csf leak",
+    "csf rhinorrhea",
+    "cupulolitíase",
+    "cálculo salivar",
+    "degeneração polipoide",
+    "desvio de septo nasal",
+    "desvio septal",
+    "dhi",
+    "dise",
+    "disfagia",
+    "disfagia de transferência",
+    "disfagia esofágica",
+    "disfagia orofaríngea",
+    "disfonia",
+    "disfunção salivar",
+    "displasia oral",
+    "dispneia",
+    "doença de ménière",
+    "drge",
+    "dsn",
+    "dysphagia",
+    "eat-10",
+    "ebv",
+    "ecm",
+    "edema angioneurótico laríngeo",
+    "edema de reinke",
+    "epiglotite aguda",
+    "epistaxe",
+    "epistaxe anterior",
+    "epistaxe posterior",
+    "epistaxis",
+    "estapedectomia",
+    "estapedotomia",
+    "estenose laringotraqueal",
+    "estenose subglótica / traqueal",
+    "estenose subglótica adquirida",
     "estomatite aftosa recorrente",
-    "leucoplasia oral",
-    "xerostomia", "hipossalivação",
-    "sialolitíase", "cálculo salivar",
+    "estridor",
+    "esvaziamento cervical",
+    "faringite aguda viral",
+    "faringite estreptocócica",
+    "faringite estreptocócica (gas)",
+    "faringite viral",
+    "faringoamigdalite bacteriana",
+    "faringoamigdalite viral",
+    "febre do feno",
+    "febre ganglionar",
+    "febre periódica com estomatite aftosa, faringite e adenite",
+    "fess",
+    "fungal rhinosinusitis",
+    "fístula de lcr",
+    "fístula liquórica nasal",
+    "gas",
+    "glue ear",
+    "gripe (influenza)",
+    "has",
+    "hb",
+    "hci",
+    "hemorragia nasal",
+    "herpangina",
+    "herpangina viral",
+    "herpes zóster ótico",
+    "hidropsia endolinfática",
+    "hipertrofia adenoideana",
+    "hipertrofia de adenoides",
+    "hipoacusia",
+    "hipoacusia neurossensorial súbita",
+    "hipossalivação",
+    "hpv",
+    "hpv-positive oropharyngeal carcinoma",
+    "hsv",
+    "iah",
+    "ibp",
+    "imobilidade de prega vocal",
+    "impactação ceruminosa",
+    "impacted cerumen",
+    "impedanciometria",
+    "imperfuração coanal",
+    "implante coclear",
+    "infectious mononucleosis",
+    "infecção de espaço profundo cervical",
+    "influenza",
+    "influenza a",
+    "influenza b",
+    "ivas / resfriado comum",
+    "labirintite",
+    "labirintite bacteriana",
+    "labirintite serosa",
+    "labirintite viral",
+    "labyrinthitis",
     "laringite aguda",
-    "nódulo vocal", "nódulo de prega vocal",
-    "pólipo de prega vocal", "pólipo laríngeo",
-    "edema de Reinke", "degeneração polipoide",
-    "paralisia de prega vocal", "imobilidade de prega vocal",
-    "papilomatose laríngea recorrente", "RRP",
-    "estenose subglótica", "estenose laringotraqueal",
+    "laringite aguda subglótica",
+    "laringite viral aguda",
     "laringomalácia",
-    "epiglotite aguda", "supraglotite aguda",
-    "crupe", "laringotraqueobronquite",
-    "carcinoma de laringe", "CEC laríngeo",
-    "linfadenopatia cervical",
-    "metástase cervical",
-    "cisto do ducto tireoglosso", "cisto tireoglosso",
-    "cisto branquial", "cisto branquiogênico",
-    "nódulo de tireoide", "bócio",
-    "ronco primário", "roncopatia",
-    "SAOS", "apneia obstrutiva do sono", "AOS", "OSA", "CPAP", "IAH",
-    "FESS", "cirurgia endoscópica sinusal",
-    "BERA", "audiometria", "impedanciometria", "nasofibroscopia",
-    "videolaringoscopia", "polissonografia",
-    "obstrução nasal", "rinorreia", "odinofagia", "disfonia", "otalgia",
-    "hipoacusia", "vertigem", "estridor", "dispneia"
+    "laringomalácia congênita",
+    "laringotraqueíte viral",
+    "laryngeal carcinoma",
+    "laryngomalacia",
+    "laryngopharyngeal reflux",
+    "lcr",
+    "leucoplasia",
+    "leucoplasia oral",
+    "linfadenite cervical",
+    "linfadenopatia cervical reacional",
+    "linfoepitelioma",
+    "litíase salivar",
+    "mastoidectomia",
+    "metástase cervical de ccp",
+    "metástase linfonodal cervical",
+    "micetoma sinusal",
+    "monilíase oral",
+    "mononucleose infecciosa",
+    "mononucleose por ebv",
+    "mucocele etmoidal",
+    "mucocele frontal",
+    "mucocele sinusal",
+    "mucormicose rinocerebral",
+    "ménière's disease",
+    "n+ cervical",
+    "nasal foreign body",
+    "nasal polyposis",
+    "nasal septal deviation",
+    "nasofaringite aguda",
+    "nasofibroscopia",
+    "nasopharyngeal carcinoma",
+    "necrotizing (malignant) otitis externa",
+    "neoplasia nasossinusal",
+    "neurinoma do acústico",
+    "neurite vestibular",
+    "neuroma acústico",
+    "neuronite vestibular",
+    "nihl",
+    "noise-induced hearing loss",
+    "npc",
+    "nódulo de cantor/professor",
+    "nódulo de prega vocal",
+    "nódulo de tireoide / bócio",
+    "nódulo tireoidiano",
+    "nódulo vocal",
+    "obstructive sleep apnea",
+    "obstrução nasal",
+    "od",
+    "odinofagia",
+    "oe",
+    "oe difusa",
+    "oma",
+    "omc",
+    "omc simples",
+    "omcs",
+    "ome",
+    "opscc hpv+",
+    "oral candidiasis",
+    "oral leukoplakia",
+    "oral squamous cell carcinoma",
+    "oro",
+    "osa",
+    "osteomielite da base do crânio",
+    "otalgia",
+    "otalgia referida",
+    "otalgia reflexa",
+    "otalgia secundária",
+    "otic barotrauma",
+    "otite externa aguda",
+    "otite externa difusa",
+    "otite externa fúngica",
+    "otite externa invasiva",
+    "otite externa maligna",
+    "otite externa micótica",
+    "otite externa necrotizante (maligna)",
+    "otite média aguda",
+    "otite média aguda supurativa",
+    "otite média crônica não colesteatomatosa",
+    "otite média crônica simples",
+    "otite média secretora",
+    "otite média secretora / efusiva",
+    "otite média serosa",
+    "otitis media with effusion",
+    "otoesclerose",
+    "otomicose",
+    "otomycosis",
+    "otosclerose",
+    "otosclerosis",
+    "otospongiose",
+    "paaf",
+    "pair",
+    "papiloma invertido",
+    "papilomatose laríngea recorrente",
+    "papilomatose respiratória recorrente",
+    "paralisia de bell",
+    "paralisia de prega vocal",
+    "paralisia facial periférica (bell)",
+    "paralisia facial periférica idiopática",
+    "paralisia laríngea unilateral/bilateral",
+    "parotidectomia",
+    "perda auditiva induzida por ruído (pair)",
+    "perda auditiva relacionada à idade",
+    "perfuração de membrana timpânica",
+    "perfuração timpânica",
+    "peritonsillar abscess",
+    "pertussis",
+    "pertussis / whooping cough",
+    "pfapa",
+    "pfapa syndrome",
+    "piocele (se infectada)",
+    "pneumonia aspirativa",
+    "pneumonia por aspiração",
+    "polipose nasal",
+    "polipose nasossinusal",
+    "polissonografia",
+    "ppvv",
+    "presbiacusia",
+    "presbycusis",
+    "primary snoring",
+    "pta",
+    "pólipo de prega vocal",
+    "pólipo laríngeo",
+    "pólipo nasal",
+    "queratoma",
+    "quinsy",
+    "ramsay hunt syndrome",
+    "ras",
+    "reactive cervical lymphadenopathy",
+    "recurrent aphthous stomatitis",
+    "recurrent respiratory papillomatosis",
+    "referred otalgia",
+    "refluxo extra-esofágico",
+    "refluxo laringofaríngeo (rlf)",
+    "refluxo supraesofágico",
+    "reinke's edema",
+    "retropharyngeal abscess",
+    "rfs",
+    "rhinitis medicamentosa",
+    "rinite alérgica",
+    "rinite alérgica perene",
+    "rinite alérgica sazonal",
+    "rinite de rebote",
+    "rinite idiopática",
+    "rinite intrínseca",
+    "rinite medicamentosa",
+    "rinite não alérgica",
+    "rinite vasomotora",
+    "rinofaringite aguda",
+    "rinoliquorreia",
+    "rinorreia",
+    "rinossinusite aguda bacteriana",
+    "rinossinusite aguda purulenta",
+    "rinossinusite crônica",
+    "rinossinusite crônica com polipose",
+    "rinossinusite fúngica",
+    "rinossinusite fúngica invasiva aguda",
+    "rlf",
+    "rolha de cerume",
+    "ronco primário",
+    "ronco simples",
+    "roncopatia",
+    "rrp",
+    "rsi",
+    "ruptura timpânica",
+    "sahos",
+    "saos",
+    "schwannoma do viii par",
+    "schwannoma vestibular",
+    "septoplastia",
+    "septum deviatum",
+    "sialolithiasis",
+    "sialolitíase",
+    "sinonasal tumor",
+    "sinus mucocele",
+    "sinusite bacteriana aguda",
+    "snot-22",
+    "srt",
+    "ssnhl",
+    "streptococcal pharyngitis",
+    "subglottic/tracheal stenosis",
+    "sudden sensorineural hearing loss",
+    "supraglotite aguda",
+    "surdez súbita (ssnhl)",
+    "surdez súbita idiopática",
+    "swimmer's ear",
+    "síndrome da apneia obstrutiva do sono (saos)",
+    "síndrome de ménière",
+    "síndrome de ramsay hunt",
+    "síndrome de ramsay hunt tipo ii",
+    "síndrome gripal",
+    "síndrome pfapa",
+    "thi",
+    "thrush",
+    "thyroglossal duct cyst",
+    "thyroid nodule / goiter",
+    "timpanomastoidectomia",
+    "timpanoplastia",
+    "tinnitus",
+    "tireoidectomia",
+    "tlm",
+    "tors",
+    "tosse convulsa",
+    "trauma acústico crônico",
+    "trt",
+    "tumor nasossinusal",
+    "tympanic membrane perforation",
+    "uppp",
+    "vasomotor rhinitis",
+    "vegetações adenoideanas",
+    "vertigem",
+    "vertigem posicional paroxística benigna (vppb)",
+    "vestibular neuritis",
+    "vestibular schwannoma",
+    "vestibulopatia aguda unilateral",
+    "vhi",
+    "videolaringoscopia",
+    "viral pharyngitis",
+    "vocal fold nodule",
+    "vocal fold paralysis",
+    "vocal fold polyp",
+    "vppb",
+    "vzv",
+    "xerostomia",
+    "zumbido (tinnitus)"
   ],
   "summary_vocabulary": [
-    {"name": "Rinite Alérgica", "cid10": ["J30.1","J30.2","J30.3","J30.4"], "key_symptoms": ["obstrução nasal","rinorreia aquosa","espirros em salva"]},
-    {"name": "Rinite Vasomotora", "cid10": ["J30.0"], "key_symptoms": ["obstrução nasal alternante","rinorreia aquosa","gotejamento pós-nasal"]},
-    {"name": "Rinite Medicamentosa", "cid10": ["J30.8"], "key_symptoms": ["obstrução nasal progressiva","dependência de descongestionante","congestão de rebote"]},
-    {"name": "IVAS / Resfriado Comum", "cid10": ["J00","J06.9"], "key_symptoms": ["congestão nasal","rinorreia","espirros"]},
-    {"name": "Gripe (Influenza)", "cid10": ["J10.1","J11.1"], "key_symptoms": ["febre alta","calafrios","mialgia"]},
-    {"name": "Rinossinusite Aguda Bacteriana", "cid10": ["J01.0","J01.1","J01.2","J01.3","J01.4","J01.8","J01.9"], "key_symptoms": ["rinorreia purulenta","obstrução nasal","dor/pressão facial"]},
-    {"name": "Rinossinusite Crônica", "cid10": ["J32.0","J32.1","J32.2","J32.3","J32.4","J32.8","J32.9"], "key_symptoms": ["obstrução nasal crônica","rinorreia anterior/posterior","dor/pressão facial"]},
-    {"name": "Polipose Nasal", "cid10": ["J33.0","J33.1","J33.8","J33.9"], "key_symptoms": ["obstrução nasal progressiva bilateral","anosmia/hiposmia","rinorreia"]},
-    {"name": "Desvio de Septo Nasal", "cid10": ["J34.2"], "key_symptoms": ["obstrução nasal unilateral predominante","respiração oral","ronco"]},
-    {"name": "Epistaxe", "cid10": ["R04.0"], "key_symptoms": ["sangramento ativo por narinas","sangue na orofaringe","náuseas por sangue deglutido"]},
-    {"name": "Corpo Estranho Nasal", "cid10": ["T17.1"], "key_symptoms": ["obstrução nasal unilateral","rinorreia purulenta fétida unilateral","epistaxe"]},
-    {"name": "Hipertrofia de Adenoides", "cid10": ["J35.2","J35.3"], "key_symptoms": ["obstrução nasal crônica","respiração oral","ronco"]},
-    {"name": "Fístula Liquórica Nasal", "cid10": ["G96.0"], "key_symptoms": ["rinorreia aquosa clara unilateral","gotejamento postural","cefaleia ortostática"]},
-    {"name": "Tumor Nasossinusal", "cid10": ["C30.0","C31.0","C31.1","C31.2","C31.3","D14.0"], "key_symptoms": ["obstrução nasal unilateral progressiva","epistaxe unilateral recorrente","dor facial"]},
-    {"name": "Atresia Coanal", "cid10": ["Q30.0"], "key_symptoms": ["cianose cíclica no neonato","obstrução nasal unilateral","impossibilidade de passar sonda nasal"]},
-    {"name": "Mucocele Sinusal", "cid10": ["J34.1"], "key_symptoms": ["dor/pressão facial progressiva","proptose","diplopia"]},
-    {"name": "Rinossinusite Fúngica", "cid10": ["B49","J32.9","B46.0"], "key_symptoms": ["obstrução nasal crônica","rinorreia espessa","dor facial"]},
-    {"name": "Otite Média Aguda", "cid10": ["H66.0","H66.9"], "key_symptoms": ["otalgia intensa","febre","irritabilidade (lactentes)"]},
-    {"name": "Otite Externa Difusa", "cid10": ["H60.3"], "key_symptoms": ["otalgia intensa (piora ao puxar pavilhão)","prurido","otorreia"]},
-    {"name": "Otite Externa Necrotizante", "cid10": ["H60.2"], "key_symptoms": ["otalgia desproporcional e refratária","otorreia purulenta persistente","granulação em assoalho de conduto"]},
-    {"name": "Otite Média Crônica Simples", "cid10": ["H66.1","H66.2","H66.3"], "key_symptoms": ["otorreia intermitente não fétida","hipoacusia condutiva","perfuração timpânica"]},
-    {"name": "Colesteatoma", "cid10": ["H71","H71.0","H71.1","H71.9"], "key_symptoms": ["otorreia fétida crônica","hipoacusia progressiva","plenitude auricular"]},
-    {"name": "Otomicose", "cid10": ["H62.2","B37.8"], "key_symptoms": ["prurido intenso no conduto","otorreia esbranquiçada/escura","sensação de ouvido tampado"]},
-    {"name": "Otite Média Secretora / Efusiva", "cid10": ["H65.0","H65.1","H65.2","H65.3","H65.9"], "key_symptoms": ["hipoacusia condutiva","plenitude auricular","autofonia"]},
-    {"name": "Cerume Impactado", "cid10": ["H61.2"], "key_symptoms": ["hipoacusia condutiva","plenitude auricular","zumbido"]},
-    {"name": "Perfuração Timpânica", "cid10": ["H72.0","H72.1","H72.2","H72.9","S09.2"], "key_symptoms": ["otalgia súbita","otorreia","hipoacusia condutiva"]},
-    {"name": "Otosclerose", "cid10": ["H80.0","H80.1","H80.2","H80.9"], "key_symptoms": ["hipoacusia condutiva bilateral progressiva","zumbido","paracusia de Willis"]},
-    {"name": "Presbiacusia", "cid10": ["H91.1"], "key_symptoms": ["hipoacusia bilateral progressiva em agudos","dificuldade de discriminação vocal","zumbido"]},
-    {"name": "PAIR", "cid10": ["H83.3"], "key_symptoms": ["hipoacusia bilateral em agudos","zumbido","dificuldade de compreensão vocal em ruído"]},
-    {"name": "Surdez Súbita (SSNHL)", "cid10": ["H91.2"], "key_symptoms": ["perda auditiva unilateral súbita","zumbido","plenitude auricular"]},
-    {"name": "Doença de Ménière", "cid10": ["H81.0"], "key_symptoms": ["vertigem rotatória episódica (20min a 12h)","hipoacusia flutuante em graves","zumbido"]},
-    {"name": "VPPB", "cid10": ["H81.1"], "key_symptoms": ["vertigem breve (<60s) posicional","nistagmo posicional","náuseas"]},
-    {"name": "Neurite Vestibular", "cid10": ["H81.2"], "key_symptoms": ["vertigem intensa prolongada (dias)","náuseas/vômitos","desequilíbrio"]},
-    {"name": "Labirintite", "cid10": ["H83.0"], "key_symptoms": ["vertigem intensa","hipoacusia neurossensorial","zumbido"]},
-    {"name": "Schwannoma Vestibular", "cid10": ["D33.3"], "key_symptoms": ["hipoacusia neurossensorial unilateral progressiva","zumbido unilateral","desequilíbrio"]},
-    {"name": "Zumbido (Tinnitus)", "cid10": ["H93.1"], "key_symptoms": ["percepção de ruído (apito, chiado, pulsação)","perturbação do sono","dificuldade de concentração"]},
-    {"name": "Barotrauma de Orelha", "cid10": ["T70.0"], "key_symptoms": ["otalgia intensa","plenitude auricular","hipoacusia"]},
-    {"name": "Otalgia Referida", "cid10": ["H92.0"], "key_symptoms": ["otalgia com exame otológico normal","dor à deglutição associada","dor em ATM"]},
-    {"name": "Paralisia Facial Periférica (Bell)", "cid10": ["G51.0"], "key_symptoms": ["fraqueza/paralisia dos músculos faciais unilateral","incapacidade de fechar o olho","desvio da comissura labial"]},
-    {"name": "Síndrome de Ramsay Hunt", "cid10": ["B02.2"], "key_symptoms": ["paralisia facial periférica aguda","vesículas na concha/conduto auditivo","otalgia intensa"]},
-    {"name": "Faringite Viral", "cid10": ["J02.9","J06.9"], "key_symptoms": ["odinofagia","hiperemia faríngea","coriza"]},
-    {"name": "Faringite Estreptocócica (GAS)", "cid10": ["J02.0","J03.0"], "key_symptoms": ["odinofagia intensa de início súbito","febre alta (>38.5°C)","exsudato amigdaliano"]},
-    {"name": "Abscesso Periamigdaliano", "cid10": ["J36"], "key_symptoms": ["odinofagia intensa unilateral","trismo","voz abafada"]},
-    {"name": "Abscesso Retrofaríngeo", "cid10": ["J39.0"], "key_symptoms": ["febre alta","odinofagia","disfagia"]},
-    {"name": "Mononucleose Infecciosa", "cid10": ["B27.0","B27.9"], "key_symptoms": ["faringoamigdalite exsudativa bilateral","linfadenopatia cervical difusa","febre prolongada"]},
-    {"name": "Herpangina", "cid10": ["B08.5"], "key_symptoms": ["febre alta de início súbito","odinofagia","vesículas/úlceras em palato mole"]},
-    {"name": "Síndrome PFAPA", "cid10": ["D89.8"], "key_symptoms": ["febre periódica alta (>39°C) com intervalo regular","faringite/amigdalite","estomatite aftosa"]},
-    {"name": "Refluxo Laringofaríngeo (RLF)", "cid10": ["K21.0","K21.9"], "key_symptoms": ["pigarro crônico","globo faríngeo","tosse crônica"]},
-    {"name": "Disfagia", "cid10": ["R13.1","R13.0"], "key_symptoms": ["dificuldade de iniciar a deglutição","engasgos","tosse durante alimentação"]},
-    {"name": "Candidose Oral", "cid10": ["B37.0"], "key_symptoms": ["placas brancas removíveis em mucosa oral","eritema difuso","ardência"]},
-    {"name": "Estomatite Aftosa Recorrente", "cid10": ["K12.0"], "key_symptoms": ["úlceras orais dolorosas recorrentes","dor ao comer/falar","halo eritematoso"]},
-    {"name": "Leucoplasia Oral", "cid10": ["K13.2"], "key_symptoms": ["placa branca assintomática","não removível por raspagem"]},
-    {"name": "Xerostomia", "cid10": ["K11.7"], "key_symptoms": ["boca seca","dificuldade de deglutição de alimentos secos","disgeusia"]},
-    {"name": "Sialolitíase", "cid10": ["K11.5"], "key_symptoms": ["tumefação da glândula durante refeições","dor glandular prandial","sialadenite secundária"]},
-    {"name": "Laringite Aguda", "cid10": ["J04.0"], "key_symptoms": ["rouquidão","desconforto laríngeo","tosse seca"]},
-    {"name": "Nódulo Vocal", "cid10": ["J38.2"], "key_symptoms": ["rouquidão crônica","fadiga vocal","voz soprosa"]},
-    {"name": "Pólipo de Prega Vocal", "cid10": ["J38.1"], "key_symptoms": ["rouquidão persistente","voz soprosa ou bitonal","fadiga vocal"]},
-    {"name": "Edema de Reinke", "cid10": ["J38.4"], "key_symptoms": ["rouquidão crônica com voz grave","esforço vocal","dispneia"]},
-    {"name": "Paralisia de Prega Vocal", "cid10": ["J38.0"], "key_symptoms": ["rouquidão/voz soprosa","dispneia/estridor","aspiração com tosse"]},
-    {"name": "Papilomatose Laríngea Recorrente", "cid10": ["D14.1"], "key_symptoms": ["rouquidão progressiva","estridor","dispneia"]},
-    {"name": "Estenose Subglótica / Traqueal", "cid10": ["J38.6","J95.5","Q31.1"], "key_symptoms": ["dispneia progressiva","estridor bifásico","intolerância ao exercício"]},
-    {"name": "Laringomalácia", "cid10": ["Q31.5"], "key_symptoms": ["estridor inspiratório","dificuldade alimentar","regurgitação"]},
-    {"name": "Epiglotite Aguda", "cid10": ["J05.1"], "key_symptoms": ["odinofagia intensa de início rápido","sialorreia","voz abafada"]},
-    {"name": "Crupe (Laringotraqueobronquite)", "cid10": ["J05.0"], "key_symptoms": ["tosse ladrante","estridor inspiratório","rouquidão"]},
-    {"name": "Carcinoma de Laringe", "cid10": ["C32.0","C32.1","C32.2","C32.3","C32.8","C32.9"], "key_symptoms": ["rouquidão persistente (>3 semanas)","odinofagia","disfagia"]},
-    {"name": "Linfadenopatia Cervical Reacional", "cid10": ["R59.0","L04.0"], "key_symptoms": ["linfonodo cervical aumentado, móvel, doloroso","infecção de via aérea associada"]},
-    {"name": "Metástase Cervical de CCP", "cid10": ["C77.0"], "key_symptoms": ["massa cervical endurecida, fixa, indolor, progressiva"]},
-    {"name": "Cisto do Ducto Tireoglosso", "cid10": ["Q89.2"], "key_symptoms": ["massa cervical na linha média, cística, móvel à deglutição"]},
-    {"name": "Cisto Branquial", "cid10": ["Q18.0"], "key_symptoms": ["massa cervical lateral, cística, anterior ao ECM"]},
-    {"name": "Nódulo de Tireoide / Bócio", "cid10": ["E04.0","E04.1","E04.2","E04.9"], "key_symptoms": ["massa cervical anterior palpável","disfagia por compressão","dispneia"]},
-    {"name": "Ronco Primário", "cid10": ["R06.5"], "key_symptoms": ["ronco habitual","sem sonolência diurna excessiva","sem apneias testemunhadas"]},
-    {"name": "SAOS", "cid10": ["G47.33"], "key_symptoms": ["ronco alto","apneias presenciadas","sonolência diurna excessiva"]},
-    {"name": "Carcinoma Espinocelular Oral", "cid10": ["C00.0","C01","C02.0","C02.1","C03.0","C03.1","C04.0","C05.0","C06.0"], "key_symptoms": ["úlcera oral que não cicatriza >3 semanas","massa oral","odinofagia"]},
-    {"name": "Carcinoma de Nasofaringe", "cid10": ["C11.0","C11.1","C11.2","C11.3","C11.9"], "key_symptoms": ["metástase cervical","obstrução nasal unilateral","epistaxe"]},
-    {"name": "Carcinoma de Orofaringe (HPV+)", "cid10": ["C10.0","C10.2","C10.9","C09.0","C09.9"], "key_symptoms": ["massa cervical cística","odinofagia","disfagia"]},
-    {"name": "Coqueluche", "cid10": ["A37.0","A37.9"], "key_symptoms": ["tosse paroxística prolongada (>2 semanas)","guincho inspiratório","vômito pós-tosse"]},
-    {"name": "Anafilaxia / Edema de Laringe", "cid10": ["T78.2","T78.0"], "key_symptoms": ["dispneia progressiva rápida","estridor","rouquidão"]},
-    {"name": "Pneumonia Aspirativa", "cid10": ["J69.0"], "key_symptoms": ["febre","tosse produtiva","dispneia"]}
+    {
+      "name": "Rinite Alérgica",
+      "cid10": [
+        "J30.1",
+        "J30.2",
+        "J30.3",
+        "J30.4"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal",
+        "rinorreia aquosa",
+        "espirros em salva",
+        "prurido nasal e ocular",
+        "hiposmia"
+      ]
+    },
+    {
+      "name": "Rinite Vasomotora",
+      "cid10": [
+        "J30.0"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal alternante",
+        "rinorreia aquosa",
+        "gotejamento pós-nasal"
+      ]
+    },
+    {
+      "name": "Rinite Medicamentosa",
+      "cid10": [
+        "J30.8"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal progressiva",
+        "dependência de descongestionante",
+        "congestão de rebote"
+      ]
+    },
+    {
+      "name": "IVAS / Resfriado Comum",
+      "cid10": [
+        "J00",
+        "J06.9"
+      ],
+      "key_symptoms": [
+        "Congestão nasal",
+        "rinorreia",
+        "espirros",
+        "dor de garganta",
+        "tosse",
+        "febre baixa"
+      ]
+    },
+    {
+      "name": "Gripe (Influenza)",
+      "cid10": [
+        "J10.1",
+        "J11.1"
+      ],
+      "key_symptoms": [
+        "Febre alta",
+        "calafrios",
+        "mialgia",
+        "cefaleia",
+        "tosse seca",
+        "odinofagia",
+        "prostração"
+      ]
+    },
+    {
+      "name": "Rinossinusite Aguda Bacteriana",
+      "cid10": [
+        "J01.0",
+        "J01.1",
+        "J01.2",
+        "J01.3",
+        "J01.4",
+        "J01.8",
+        "J01.9"
+      ],
+      "key_symptoms": [
+        "Rinorreia purulenta",
+        "obstrução nasal",
+        "dor/pressão facial",
+        "hiposmia",
+        "gotejamento pós-nasal",
+        "febre"
+      ]
+    },
+    {
+      "name": "Rinossinusite Crônica",
+      "cid10": [
+        "J32.0",
+        "J32.1",
+        "J32.2",
+        "J32.3",
+        "J32.4",
+        "J32.8",
+        "J32.9"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal crônica",
+        "rinorreia anterior/posterior",
+        "dor/pressão facial",
+        "hiposmia/anosmia"
+      ]
+    },
+    {
+      "name": "Polipose Nasal",
+      "cid10": [
+        "J33.0",
+        "J33.1",
+        "J33.8",
+        "J33.9"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal progressiva bilateral",
+        "anosmia/hiposmia",
+        "rinorreia",
+        "gotejamento pós-nasal",
+        "cefaleia"
+      ]
+    },
+    {
+      "name": "Desvio de Septo Nasal",
+      "cid10": [
+        "J34.2"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal unilateral predominante",
+        "respiração oral",
+        "ronco",
+        "cefaleia",
+        "epistaxe"
+      ]
+    },
+    {
+      "name": "Epistaxe",
+      "cid10": [
+        "R04.0"
+      ],
+      "key_symptoms": [
+        "Sangramento ativo por uma ou ambas narinas",
+        "sangue na orofaringe (posterior)",
+        "náuseas por sangue deglutido"
+      ]
+    },
+    {
+      "name": "Corpo Estranho Nasal",
+      "cid10": [
+        "T17.1"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal unilateral",
+        "rinorreia purulenta fétida unilateral",
+        "epistaxe",
+        "halitose"
+      ]
+    },
+    {
+      "name": "Hipertrofia de Adenoides",
+      "cid10": [
+        "J35.2",
+        "J35.3"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal crônica",
+        "respiração oral",
+        "ronco",
+        "voz hiponasal",
+        "otite média secretora recorrente",
+        "fácies adenoideana"
+      ]
+    },
+    {
+      "name": "Fístula Liquórica Nasal",
+      "cid10": [
+        "G96.0"
+      ],
+      "key_symptoms": [
+        "Rinorreia aquosa clara unilateral",
+        "gotejamento postural",
+        "cefaleia ortostática",
+        "sinal do halo"
+      ]
+    },
+    {
+      "name": "Tumor Nasossinusal",
+      "cid10": [
+        "C30.0",
+        "C31.0",
+        "C31.1",
+        "C31.2",
+        "C31.3",
+        "D14.0"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal unilateral progressiva",
+        "epistaxe unilateral recorrente",
+        "dor facial",
+        "hiposmia/anosmia",
+        "proptose"
+      ]
+    },
+    {
+      "name": "Atresia Coanal",
+      "cid10": [
+        "Q30.0"
+      ],
+      "key_symptoms": [
+        "Cianose cíclica no neonato (piora ao mamar, melhora ao chorar)",
+        "obstrução nasal unilateral (se unilateral)",
+        "impossibilidade de passar sonda nasal"
+      ]
+    },
+    {
+      "name": "Mucocele Sinusal",
+      "cid10": [
+        "J34.1"
+      ],
+      "key_symptoms": [
+        "Dor/pressão facial progressiva",
+        "proptose (se etmoidal/frontal)",
+        "diplopia",
+        "cefaleia frontal"
+      ]
+    },
+    {
+      "name": "Rinossinusite Fúngica",
+      "cid10": [
+        "B49",
+        "J32.9",
+        "B46.0"
+      ],
+      "key_symptoms": [
+        "Obstrução nasal crônica",
+        "rinorreia espessa",
+        "dor facial",
+        "proptose (invasiva)",
+        "necrose de palato/turbinado (invasiva aguda)"
+      ]
+    },
+    {
+      "name": "Otite Média Aguda",
+      "cid10": [
+        "H66.0",
+        "H66.9"
+      ],
+      "key_symptoms": [
+        "Otalgia intensa",
+        "febre",
+        "irritabilidade (lactentes)",
+        "hipoacusia",
+        "otorreia (se perfuração)"
+      ]
+    },
+    {
+      "name": "Otite Externa Difusa",
+      "cid10": [
+        "H60.3"
+      ],
+      "key_symptoms": [
+        "Otalgia intensa (piora ao puxar pavilhão/tragus)",
+        "prurido",
+        "otorreia",
+        "edema do conduto",
+        "hipoacusia condutiva"
+      ]
+    },
+    {
+      "name": "Otite Externa Necrotizante (Maligna)",
+      "cid10": [
+        "H60.2"
+      ],
+      "key_symptoms": [
+        "Otalgia desproporcional e refratária",
+        "otorreia purulenta persistente",
+        "granulação em assoalho de conduto",
+        "paralisia facial (VII par)"
+      ]
+    },
+    {
+      "name": "Otite Média Crônica Simples",
+      "cid10": [
+        "H66.1",
+        "H66.2",
+        "H66.3"
+      ],
+      "key_symptoms": [
+        "Otorreia intermitente não fétida",
+        "hipoacusia condutiva",
+        "perfuração timpânica"
+      ]
+    },
+    {
+      "name": "Colesteatoma",
+      "cid10": [
+        "H71",
+        "H71.0",
+        "H71.1",
+        "H71.9"
+      ],
+      "key_symptoms": [
+        "Otorreia fétida crônica",
+        "hipoacusia progressiva",
+        "sensação de plenitude auricular"
+      ]
+    },
+    {
+      "name": "Otomicose",
+      "cid10": [
+        "H62.2",
+        "B37.8"
+      ],
+      "key_symptoms": [
+        "Prurido intenso no conduto",
+        "otorreia esbranquiçada/escura",
+        "sensação de ouvido tampado",
+        "otalgia leve"
+      ]
+    },
+    {
+      "name": "Otite Média Secretora / Efusiva",
+      "cid10": [
+        "H65.0",
+        "H65.1",
+        "H65.2",
+        "H65.3",
+        "H65.9"
+      ],
+      "key_symptoms": [
+        "Hipoacusia condutiva",
+        "plenitude auricular",
+        "autofonia",
+        "atraso de fala (crianças)"
+      ]
+    },
+    {
+      "name": "Cerume Impactado",
+      "cid10": [
+        "H61.2"
+      ],
+      "key_symptoms": [
+        "Hipoacusia condutiva",
+        "plenitude auricular",
+        "zumbido",
+        "otalgia",
+        "prurido"
+      ]
+    },
+    {
+      "name": "Perfuração Timpânica",
+      "cid10": [
+        "H72.0",
+        "H72.1",
+        "H72.2",
+        "H72.9",
+        "S09.2"
+      ],
+      "key_symptoms": [
+        "Otalgia súbita (alívio após perfuração)",
+        "otorreia",
+        "hipoacusia condutiva",
+        "zumbido"
+      ]
+    },
+    {
+      "name": "Otosclerose",
+      "cid10": [
+        "H80.0",
+        "H80.1",
+        "H80.2",
+        "H80.9"
+      ],
+      "key_symptoms": [
+        "Hipoacusia condutiva bilateral progressiva",
+        "zumbido",
+        "paracusia de Willis (ouve melhor em ambiente ruidoso)"
+      ]
+    },
+    {
+      "name": "Presbiacusia",
+      "cid10": [
+        "H91.1"
+      ],
+      "key_symptoms": [
+        "Hipoacusia bilateral progressiva em agudos",
+        "dificuldade de discriminação vocal (especialmente em ambiente ruidoso)",
+        "zumbido"
+      ]
+    },
+    {
+      "name": "Perda Auditiva Induzida por Ruído (PAIR)",
+      "cid10": [
+        "H83.3"
+      ],
+      "key_symptoms": [
+        "Hipoacusia bilateral em agudos",
+        "zumbido",
+        "dificuldade de compreensão vocal em ruído"
+      ]
+    },
+    {
+      "name": "Surdez Súbita (SSNHL)",
+      "cid10": [
+        "H91.2"
+      ],
+      "key_symptoms": [
+        "Perda auditiva unilateral súbita",
+        "zumbido",
+        "plenitude auricular",
+        "vertigem (em ~30%)"
+      ]
+    },
+    {
+      "name": "Doença de Ménière",
+      "cid10": [
+        "H81.0"
+      ],
+      "key_symptoms": [
+        "Vertigem rotatória episódica (20min a 12h)",
+        "hipoacusia flutuante em graves",
+        "zumbido",
+        "plenitude auricular"
+      ]
+    },
+    {
+      "name": "Vertigem Posicional Paroxística Benigna (VPPB)",
+      "cid10": [
+        "H81.1"
+      ],
+      "key_symptoms": [
+        "Vertigem breve (<60s) posicional",
+        "nistagmo posicional",
+        "náuseas"
+      ]
+    },
+    {
+      "name": "Neurite Vestibular",
+      "cid10": [
+        "H81.2"
+      ],
+      "key_symptoms": [
+        "Vertigem intensa prolongada (dias)",
+        "náuseas/vômitos",
+        "desequilíbrio",
+        "nistagmo horizontal espontâneo",
+        "audição preservada"
+      ]
+    },
+    {
+      "name": "Labirintite",
+      "cid10": [
+        "H83.0"
+      ],
+      "key_symptoms": [
+        "Vertigem intensa",
+        "hipoacusia neurossensorial",
+        "zumbido",
+        "náuseas/vômitos",
+        "nistagmo"
+      ]
+    },
+    {
+      "name": "Schwannoma Vestibular",
+      "cid10": [
+        "D33.3"
+      ],
+      "key_symptoms": [
+        "Hipoacusia neurossensorial unilateral progressiva",
+        "zumbido unilateral",
+        "desequilíbrio",
+        "dormência facial (tumores grandes)"
+      ]
+    },
+    {
+      "name": "Zumbido (Tinnitus)",
+      "cid10": [
+        "H93.1"
+      ],
+      "key_symptoms": [
+        "Percepção de ruído (apito, chiado, pulsação)",
+        "perturbação do sono",
+        "dificuldade de concentração",
+        "ansiedade/depressão"
+      ]
+    },
+    {
+      "name": "Barotrauma de Orelha",
+      "cid10": [
+        "T70.0"
+      ],
+      "key_symptoms": [
+        "Otalgia intensa",
+        "plenitude auricular",
+        "hipoacusia",
+        "vertigem (se fístula perilinfática)",
+        "otorreia (se perfuração)"
+      ]
+    },
+    {
+      "name": "Otalgia Referida",
+      "cid10": [
+        "H92.0"
+      ],
+      "key_symptoms": [
+        "Otalgia com exame otológico normal",
+        "dor à deglutição associada",
+        "dor em ATM"
+      ]
+    },
+    {
+      "name": "Paralisia Facial Periférica (Bell)",
+      "cid10": [
+        "G51.0"
+      ],
+      "key_symptoms": [
+        "Fraqueza/paralisia dos músculos faciais unilateral",
+        "incapacidade de fechar o olho",
+        "desvio da comissura labial",
+        "disgeusia",
+        "hiperacusia"
+      ]
+    },
+    {
+      "name": "Síndrome de Ramsay Hunt",
+      "cid10": [
+        "B02.2"
+      ],
+      "key_symptoms": [
+        "Paralisia facial periférica aguda",
+        "vesículas na concha/conduto auditivo",
+        "otalgia intensa",
+        "hipoacusia neurossensorial",
+        "vertigem"
+      ]
+    },
+    {
+      "name": "Faringite Viral",
+      "cid10": [
+        "J02.9",
+        "J06.9"
+      ],
+      "key_symptoms": [
+        "Odinofagia",
+        "hiperemia faríngea",
+        "coriza",
+        "tosse",
+        "febre baixa",
+        "mialgia"
+      ]
+    },
+    {
+      "name": "Faringite Estreptocócica (GAS)",
+      "cid10": [
+        "J02.0",
+        "J03.0"
+      ],
+      "key_symptoms": [
+        "Odinofagia intensa de início súbito",
+        "febre alta (>38.5°C)",
+        "exsudato amigdaliano",
+        "adenomegalia cervical anterior dolorosa",
+        "ausência de tosse"
+      ]
+    },
+    {
+      "name": "Abscesso Periamigdaliano",
+      "cid10": [
+        "J36"
+      ],
+      "key_symptoms": [
+        "Odinofagia intensa unilateral",
+        "trismo",
+        "voz abafada ('batata quente')",
+        "febre",
+        "sialorreia",
+        "desvio uvular contralateral"
+      ]
+    },
+    {
+      "name": "Abscesso Retrofaríngeo",
+      "cid10": [
+        "J39.0"
+      ],
+      "key_symptoms": [
+        "Febre alta",
+        "odinofagia",
+        "disfagia",
+        "rigidez de nuca",
+        "estridor",
+        "sialorreia",
+        "hiperextensão cervical"
+      ]
+    },
+    {
+      "name": "Mononucleose Infecciosa",
+      "cid10": [
+        "B27.0",
+        "B27.9"
+      ],
+      "key_symptoms": [
+        "Faringoamigdalite exsudativa bilateral",
+        "linfadenopatia cervical difusa",
+        "febre prolongada",
+        "fadiga intensa",
+        "esplenomegalia",
+        "exantema (se amoxicilina)"
+      ]
+    },
+    {
+      "name": "Herpangina",
+      "cid10": [
+        "B08.5"
+      ],
+      "key_symptoms": [
+        "Febre alta de início súbito",
+        "odinofagia",
+        "vesículas/úlceras em palato mole e pilares",
+        "disfagia",
+        "sialorreia"
+      ]
+    },
+    {
+      "name": "Síndrome PFAPA",
+      "cid10": [
+        "D89.8"
+      ],
+      "key_symptoms": [
+        "Febre periódica alta (>39°C) com intervalo regular",
+        "faringite/amigdalite",
+        "estomatite aftosa",
+        "adenite cervical"
+      ]
+    },
+    {
+      "name": "Refluxo Laringofaríngeo (RLF)",
+      "cid10": [
+        "K21.0",
+        "K21.9"
+      ],
+      "key_symptoms": [
+        "Pigarro crônico",
+        "globo faríngeo",
+        "tosse crônica",
+        "rouquidão",
+        "disfagia leve",
+        "excesso de muco na garganta"
+      ]
+    },
+    {
+      "name": "Disfagia",
+      "cid10": [
+        "R13.1",
+        "R13.0"
+      ],
+      "key_symptoms": [
+        "Dificuldade de iniciar a deglutição",
+        "engasgos",
+        "tosse durante alimentação",
+        "perda de peso",
+        "pneumonias de repetição"
+      ]
+    },
+    {
+      "name": "Candidose Oral",
+      "cid10": [
+        "B37.0"
+      ],
+      "key_symptoms": [
+        "Placas brancas removíveis em mucosa oral",
+        "eritema difuso (forma eritematosa)",
+        "ardência",
+        "disgeusia",
+        "disfagia"
+      ]
+    },
+    {
+      "name": "Estomatite Aftosa Recorrente",
+      "cid10": [
+        "K12.0"
+      ],
+      "key_symptoms": [
+        "Úlceras orais dolorosas recorrentes",
+        "dor ao comer/falar",
+        "halo eritematoso ao redor da úlcera"
+      ]
+    },
+    {
+      "name": "Leucoplasia Oral",
+      "cid10": [
+        "K13.2"
+      ],
+      "key_symptoms": [
+        "Placa branca assintomática ou levemente dolorosa",
+        "não removível por raspagem"
+      ]
+    },
+    {
+      "name": "Xerostomia",
+      "cid10": [
+        "K11.7"
+      ],
+      "key_symptoms": [
+        "Boca seca",
+        "dificuldade de deglutição de alimentos secos",
+        "disgeusia",
+        "cáries frequentes",
+        "candidose oral"
+      ]
+    },
+    {
+      "name": "Sialolitíase",
+      "cid10": [
+        "K11.5"
+      ],
+      "key_symptoms": [
+        "Tumefação da glândula durante refeições",
+        "dor glandular prandial",
+        "sialadenite secundária",
+        "palpação de cálculo no ducto"
+      ]
+    },
+    {
+      "name": "Laringite Aguda",
+      "cid10": [
+        "J04.0"
+      ],
+      "key_symptoms": [
+        "Rouquidão",
+        "desconforto laríngeo",
+        "tosse seca",
+        "dor ao falar"
+      ]
+    },
+    {
+      "name": "Nódulo Vocal",
+      "cid10": [
+        "J38.2"
+      ],
+      "key_symptoms": [
+        "Rouquidão crônica",
+        "fadiga vocal",
+        "voz soprosa",
+        "quebras vocais"
+      ]
+    },
+    {
+      "name": "Pólipo de Prega Vocal",
+      "cid10": [
+        "J38.1"
+      ],
+      "key_symptoms": [
+        "Rouquidão persistente",
+        "voz soprosa ou bitonal",
+        "fadiga vocal"
+      ]
+    },
+    {
+      "name": "Edema de Reinke",
+      "cid10": [
+        "J38.4"
+      ],
+      "key_symptoms": [
+        "Rouquidão crônica com voz grave",
+        "esforço vocal",
+        "dispneia (casos graves)"
+      ]
+    },
+    {
+      "name": "Paralisia de Prega Vocal",
+      "cid10": [
+        "J38.0"
+      ],
+      "key_symptoms": [
+        "Rouquidão/voz soprosa (unilateral)",
+        "dispneia/estridor (bilateral)",
+        "aspiração com tosse ao comer/beber",
+        "tosse ineficaz"
+      ]
+    },
+    {
+      "name": "Papilomatose Laríngea Recorrente",
+      "cid10": [
+        "D14.1"
+      ],
+      "key_symptoms": [
+        "Rouquidão progressiva",
+        "estridor (crianças)",
+        "dispneia"
+      ]
+    },
+    {
+      "name": "Estenose Subglótica / Traqueal",
+      "cid10": [
+        "J38.6",
+        "J95.5",
+        "Q31.1"
+      ],
+      "key_symptoms": [
+        "Dispneia progressiva",
+        "estridor bifásico",
+        "intolerância ao exercício",
+        "tosse",
+        "dificuldade de extubação"
+      ]
+    },
+    {
+      "name": "Laringomalácia",
+      "cid10": [
+        "Q31.5"
+      ],
+      "key_symptoms": [
+        "Estridor inspiratório (piora com alimentação, choro, agitação, decúbito dorsal)",
+        "dificuldade alimentar",
+        "regurgitação"
+      ]
+    },
+    {
+      "name": "Epiglotite Aguda",
+      "cid10": [
+        "J05.1"
+      ],
+      "key_symptoms": [
+        "Odinofagia intensa de início rápido",
+        "sialorreia",
+        "voz abafada",
+        "estridor",
+        "posição de tripé",
+        "febre alta"
+      ]
+    },
+    {
+      "name": "Crupe (Laringotraqueobronquite)",
+      "cid10": [
+        "J05.0"
+      ],
+      "key_symptoms": [
+        "Tosse ladrante (barking cough)",
+        "estridor inspiratório",
+        "rouquidão",
+        "dispneia",
+        "piora noturna"
+      ]
+    },
+    {
+      "name": "Carcinoma de Laringe",
+      "cid10": [
+        "C32.0",
+        "C32.1",
+        "C32.2",
+        "C32.3",
+        "C32.8",
+        "C32.9"
+      ],
+      "key_symptoms": [
+        "Rouquidão persistente (>3 semanas)",
+        "odinofagia",
+        "disfagia",
+        "otalgia reflexa",
+        "dispneia",
+        "perda de peso"
+      ]
+    },
+    {
+      "name": "Linfadenopatia Cervical Reacional",
+      "cid10": [
+        "R59.0",
+        "L04.0"
+      ],
+      "key_symptoms": [
+        "Linfonodo cervical aumentado, móvel, doloroso",
+        "infecção de via aérea associada"
+      ]
+    },
+    {
+      "name": "Metástase Cervical de CCP",
+      "cid10": [
+        "C77.0"
+      ],
+      "key_symptoms": [
+        "Massa cervical endurecida, fixa, indolor, progressiva"
+      ]
+    },
+    {
+      "name": "Cisto do Ducto Tireoglosso",
+      "cid10": [
+        "Q89.2"
+      ],
+      "key_symptoms": [
+        "Massa cervical na linha média, cística, móvel à deglutição",
+        "pode infectar (tumoração dolorosa)"
+      ]
+    },
+    {
+      "name": "Cisto Branquial",
+      "cid10": [
+        "Q18.0"
+      ],
+      "key_symptoms": [
+        "Massa cervical lateral, cística, geralmente anterior ao ECM",
+        "pode infectar e formar abscesso"
+      ]
+    },
+    {
+      "name": "Nódulo de Tireoide / Bócio",
+      "cid10": [
+        "E04.0",
+        "E04.1",
+        "E04.2",
+        "E04.9"
+      ],
+      "key_symptoms": [
+        "Massa cervical anterior palpável",
+        "disfagia por compressão",
+        "dispneia (bócio mergulhante)"
+      ]
+    },
+    {
+      "name": "Ronco Primário",
+      "cid10": [
+        "R06.5"
+      ],
+      "key_symptoms": [
+        "Ronco habitual",
+        "sem sonolência diurna excessiva",
+        "sem apneias testemunhadas"
+      ]
+    },
+    {
+      "name": "Síndrome da Apneia Obstrutiva do Sono (SAOS)",
+      "cid10": [
+        "G47.33"
+      ],
+      "key_symptoms": [
+        "Ronco alto",
+        "apneias presenciadas",
+        "sonolência diurna excessiva",
+        "cefaleia matinal",
+        "noctúria",
+        "dificuldade de concentração"
+      ]
+    },
+    {
+      "name": "Carcinoma Espinocelular Oral",
+      "cid10": [
+        "C00.0",
+        "C01",
+        "C02.0",
+        "C02.1",
+        "C03.0",
+        "C03.1",
+        "C04.0",
+        "C05.0",
+        "C06.0"
+      ],
+      "key_symptoms": [
+        "Úlcera oral que não cicatriza >3 semanas",
+        "massa oral",
+        "odinofagia",
+        "otalgia reflexa",
+        "trismo",
+        "linfonodo cervical"
+      ]
+    },
+    {
+      "name": "Carcinoma de Nasofaringe",
+      "cid10": [
+        "C11.0",
+        "C11.1",
+        "C11.2",
+        "C11.3",
+        "C11.9"
+      ],
+      "key_symptoms": [
+        "Metástase cervical (apresentação mais comum)",
+        "obstrução nasal unilateral",
+        "epistaxe",
+        "OME unilateral em adulto",
+        "hipoacusia condutiva unilateral",
+        "paralisia de nervo craniano"
+      ]
+    },
+    {
+      "name": "Carcinoma de Orofaringe (HPV+)",
+      "cid10": [
+        "C10.0",
+        "C10.2",
+        "C10.9",
+        "C09.0",
+        "C09.9"
+      ],
+      "key_symptoms": [
+        "Massa cervical cística (metástase)",
+        "odinofagia",
+        "disfagia",
+        "otalgia reflexa"
+      ]
+    },
+    {
+      "name": "Coqueluche",
+      "cid10": [
+        "A37.0",
+        "A37.9"
+      ],
+      "key_symptoms": [
+        "Tosse paroxística prolongada (>2 semanas)",
+        "guincho inspiratório",
+        "vômito pós-tosse",
+        "apneia em lactentes"
+      ]
+    },
+    {
+      "name": "Anafilaxia / Edema de Laringe",
+      "cid10": [
+        "T78.2",
+        "T78.0"
+      ],
+      "key_symptoms": [
+        "Dispneia progressiva rápida",
+        "estridor",
+        "rouquidão",
+        "urticária",
+        "angioedema facial",
+        "hipotensão"
+      ]
+    },
+    {
+      "name": "Pneumonia Aspirativa",
+      "cid10": [
+        "J69.0"
+      ],
+      "key_symptoms": [
+        "Febre",
+        "tosse produtiva",
+        "dispneia",
+        "engasgos recorrentes",
+        "infiltrado em base pulmonar direita"
+      ]
+    }
   ]
 }

@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# ffmpeg necessário para pydub (conversão de áudio)
+# ffmpeg necessário para pydub (conversão de áudio mobile: 3GP/AMR → MP3)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*

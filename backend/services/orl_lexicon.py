@@ -30,6 +30,27 @@ def get_whisper_prompt_hint() -> str:
     return "Consulta de otorrinolaringologia. Termos: " + ", ".join(terms[:80]) + "."
 
 
+def get_orl_keywords_for_deepgram() -> list[str]:
+    """
+    Retorna lista de termos ORL formatados para o parâmetro 'keywords' do Deepgram.
+    Formato: ["termo:intensifier", ...] — intensifier é um float (1.5 = boost moderado).
+    Deepgram aceita keywords como repeated query params para biasing de reconhecimento.
+    Limitado a 100 termos para não sobrecarregar a API.
+    """
+    vocab = _load()
+    terms = vocab.get("whisper_prompt_terms", [])
+    if not terms:
+        return []
+    # Selecionar termos mais relevantes (pt-BR) e aplicar boost
+    BOOST = "1.5"
+    MAX_KEYWORDS = 100
+    keywords = []
+    for term in terms[:MAX_KEYWORDS]:
+        # Deepgram keyword format: "term:intensifier"
+        keywords.append(f"{term}:{BOOST}")
+    return keywords
+
+
 def get_summary_vocabulary_block() -> str:
     """Retorna bloco de vocabulário ORL para injeção no prompt de sumarização."""
     vocab = _load()

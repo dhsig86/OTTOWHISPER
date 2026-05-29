@@ -1,6 +1,7 @@
 """
 OTTO WHISPER — Backend FastAPI
-Sprint 4: sessões Firebase + rotas GET/DELETE + persistência pós-transcrição
+v1.0.0: migração para Deepgram Nova-2 (transcrição + diarização em chamada única)
+Sessões Firebase + rotas GET/DELETE + persistência pós-transcrição
 """
 import os
 import uuid
@@ -21,8 +22,7 @@ from models.schemas import (
     SummarizeResponse,
     WhisperSession,
 )
-from services.whisper_service import transcribe_audio, build_full_transcript
-from services.diarization_service import apply_diarization, merge_consecutive_speaker
+from services.deepgram_service import transcribe_and_diarize, build_full_transcript, merge_consecutive_speaker
 from services.summary_service import summarize_transcript
 from firebase_db import save_session, get_sessions_by_doctor, get_session, delete_session
 
@@ -30,15 +30,16 @@ from firebase_db import save_session, get_sessions_by_doctor, get_session, delet
 
 app = FastAPI(
     title="OTTO Whisper API",
-    version="0.2.0",
-    description="Escrivão médico inteligente — transcrição e sumarização de consultas ORL",
+    version="1.0.0",
+    description="Escrivão médico inteligente — transcrição e sumarização de consultas ORL (Deepgram Nova-2)",
 )
 
 # ─── CORS ────────────────────────────────────────────────────────────────────
 
 ALLOWED_ORIGINS = [
-    "http://localhost:5174",
     "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5179",
     "https://otto-whisper.netlify.app",
     "https://otto.drdariohart.com",
     "https://ottopwa.vercel.app",
@@ -70,7 +71,7 @@ async def add_iframe_headers(request: Request, call_next):
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "otto-whisper", "version": "0.2.0"}
+    return {"status": "ok", "service": "otto-whisper", "version": "1.0.0"}
 
 # ─── Helpers SSE ─────────────────────────────────────────────────────────────
 
@@ -107,25 +108,15 @@ async def _process_audio_stream(
         if len(audio_bytes) == 0:
             raise ValueError("Arquivo de áudio vazio — nenhum dado recebido")
 
-        # Etapa 1: Transcrição Whisper
-        yield progress("transcrevendo", 15, "Transcrevendo áudio com Whisper AI...")
-        print(f"[STREAM] Chamando Whisper para {filename}...", flush=True)
+        # Etapa 1: Transcrição + diarização via Deepgram Nova-2 (chamada única)
+        yield progress("processando", 15, "Processando áudio com Deepgram Nova-2...")
+        print(f"[STREAM] Chamando Deepgram para {filename}...", flush=True)
 
-        loop = asyncio.get_event_loop()
-        segments, duration = await loop.run_in_executor(
-            None,
-            lambda: transcribe_audio(audio_bytes, filename, language),
-        )
+        segments, duration = await transcribe_and_diarize(audio_bytes, filename, language)
 
-        print(f"[STREAM] Whisper OK: {len(segments)} segmentos, {duration:.1f}s", flush=True)
-        yield progress("diarizando", 55, "Identificando falantes (Médico / Paciente)...")
+        print(f"[STREAM] Deepgram OK: {len(segments)} segmentos, {duration:.1f}s", flush=True)
 
-        # Etapa 2: Diarização pyannote
-        segments = await loop.run_in_executor(
-            None,
-            lambda: apply_diarization(segments, audio_bytes, lambda s: None),
-        )
-
+        # Etapa 2: Mesclar segmentos consecutivos do mesmo falante
         yield progress("mesclando", 80, "Mesclando blocos de fala...")
         segments = merge_consecutive_speaker(segments)
         full_transcript = build_full_transcript(segments)
@@ -180,7 +171,7 @@ async def transcribe_endpoint(
         raise HTTPException(status_code=400, detail="Arquivo de áudio vazio ou muito pequeno")
 
     try:
-        segments, duration = transcribe_audio(
+        segments, duration = await transcribe_and_diarize(
             audio_bytes=audio_bytes,
             filename=audio_file.filename or "consulta.webm",
             language=language,
@@ -188,9 +179,8 @@ async def transcribe_endpoint(
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Erro Whisper: {str(e)}")
+        raise HTTPException(status_code=502, detail=f"Erro Deepgram: {str(e)}")
 
-    segments = apply_diarization(segments, audio_bytes)
     segments = merge_consecutive_speaker(segments)
     full_transcript = build_full_transcript(segments)
 

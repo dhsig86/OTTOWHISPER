@@ -1,6 +1,6 @@
 # OTTO WHISPER — CLAUDE.md
 
-> Contexto operacional para agentes LLM. Atualizado: 2025-05-24.
+> Contexto operacional para agentes LLM. Atualizado: 2026-05-29. Versão 1.0.0 (Deepgram Nova-2).
 
 ---
 
@@ -9,10 +9,12 @@
 Escriba médico inteligente para consultas de Otorrinolaringologia. Pipeline completo:
 
 1. **Gravação** — MediaRecorder API (WebM/Ogg) no browser ou upload de arquivo de áudio
-2. **Transcrição** — OpenAI Whisper API (`whisper-1`) com suporte a chunking para arquivos > 25 MB
-3. **Diarização** — pyannote.audio (`speaker-diarization-3.1`) para separar MÉDICO vs PACIENTE
-4. **Sumarização** — GPT-4o gera resumo estruturado (QP, HDA, exame físico, hipótese, conduta, CID-10)
-5. **Persistência** — Sessões salvas no Firebase Firestore com ownership check por médico
+2. **Transcrição + Diarização** — **Deepgram Nova-2** (chamada única: transcrição + separação MÉDICO/PACIENTE)
+3. **Sumarização** — GPT-4o gera resumo estruturado (QP, HDA, exame físico, hipótese, conduta, CID-10)
+4. **Persistência** — Sessões salvas no Firebase Firestore com ownership check por médico
+
+> **Migração v1.0.0:** Substituição de OpenAI Whisper API + pyannote.audio por Deepgram Nova-2.
+> Ver `DEEPGRAM_MIGRATION.md` para detalhes completos da migração.
 
 ---
 
@@ -21,13 +23,13 @@ Escriba médico inteligente para consultas de Otorrinolaringologia. Pipeline com
 | Camada | Plataforma | URL | Porta dev |
 |--------|-----------|-----|-----------|
 | Frontend | Netlify / Vercel | `https://otto-whisper.netlify.app` | 5179 |
-| Backend | Render / Cloud Run (Docker) | `https://otto-whisper.onrender.com` | 8003 |
+| Backend | **Google Cloud Run** | `https://otto-whisper-api-<hash>.run.app` (pendente deploy) | 8003 |
 
 ### Configs de deploy
 - **Netlify:** `netlify.toml` na raiz — base: `frontend`, build: `npm run build`, publish: `dist`
 - **Vercel:** `frontend/vercel.json` — SPA rewrite + CSP headers
-- **Render:** `backend/render.yaml` — Docker, starter plan, Oregon, autodeploy
-- **Cloud Run:** `backend/Dockerfile` — python:3.11-slim + ffmpeg, PORT=8080
+- **Cloud Run:** `backend/Dockerfile` — python:3.11-slim + ffmpeg, PORT=8080, ~200MB imagem
+- ~~**Render:** Descontinuado (RAM insuficiente para pyannote — não mais necessário)~~
 
 ---
 
@@ -38,7 +40,7 @@ Escriba médico inteligente para consultas de Otorrinolaringologia. Pipeline com
 cd backend
 python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env   # preencher OPENAI_API_KEY, HUGGINGFACE_TOKEN
+cp .env.example .env   # preencher DEEPGRAM_API_KEY, OPENAI_API_KEY
 uvicorn main:app --reload --port 8003
 ```
 
@@ -59,10 +61,11 @@ npm run lint           # eslint src --ext ts,tsx
 ```
 OTTO WHISPER/
 ├── backend/
-│   ├── main.py                              ← FastAPI: CORS, middleware CSP, todas as rotas
+│   ├── main.py                              ← FastAPI v1.0.0: CORS, middleware CSP, todas as rotas
 │   ├── services/
-│   │   ├── whisper_service.py               ← transcribe_audio(), chunking > 25MB, normalize_audio()
-│   │   ├── diarization_service.py           ← apply_diarization(), merge_consecutive_speaker()
+│   │   ├── deepgram_service.py              ← transcribe_and_diarize() via Deepgram Nova-2 (PRINCIPAL)
+│   │   ├── whisper_service.py               ← [BACKUP] transcrição OpenAI Whisper (não importado)
+│   │   ├── diarization_service.py           ← [BACKUP] diarização pyannote (não importado)
 │   │   └── summary_service.py               ← summarize_transcript() via GPT-4o
 │   ├── models/
 │   │   └── schemas.py                       ← Pydantic: Speaker enum, TranscriptSegment, ClinicalSummary,
@@ -430,11 +433,13 @@ ALLOWED_ORIGINS = [
 
 | Variável | Obrigatória | Descrição |
 |----------|------------|-----------|
-| `OPENAI_API_KEY` | ✅ | Chave API OpenAI para Whisper e GPT-4o |
+| `DEEPGRAM_API_KEY` | ✅ | Chave API Deepgram para transcrição + diarização |
+| `OPENAI_API_KEY` | ✅ | Chave API OpenAI para GPT-4o (sumarização) |
 | `GOOGLE_APPLICATION_CREDENTIALS` | ✅ prod | Path para JSON do service account Firebase |
-| `HUGGINGFACE_TOKEN` | ✅ prod | Token HuggingFace para pyannote speaker-diarization-3.1 |
 | `EXTRA_ALLOWED_ORIGINS` | Não | Origens adicionais CORS, separadas por vírgula |
 | `PORT` | Não | Porta do servidor (default: 8080 no Docker) |
+
+> ~~`HUGGINGFACE_TOKEN`~~ — removido (pyannote não mais utilizado)
 
 ### Frontend
 
@@ -449,18 +454,18 @@ ALLOWED_ORIGINS = [
 ### Backend
 ```
 fastapi==0.111.0, uvicorn[standard]==0.30.1, python-multipart
-openai==1.57.0                   ← Whisper API + GPT-4o
+openai==1.57.0                   ← GPT-4o (sumarização apenas)
+httpx>=0.27.0                    ← HTTP client para Deepgram API
 pydantic==2.7.4                  ← Schemas de request/response
 pydub==0.25.1                    ← Conversão de áudio (3GP/AMR → MP3)
-pyannote.audio==3.3.1            ← Diarização de falantes
-torch==2.3.1, torchaudio==2.3.1  ← Backend do pyannote
 firebase-admin==6.5.0            ← Auth + Firestore
-huggingface_hub>=0.19.0          ← Download do modelo pyannote
 ```
+
+**Removidos na v1.0.0:** `pyannote.audio`, `torch`, `torchaudio`, `huggingface_hub`
 
 **Dependência de sistema (Docker):** `ffmpeg` (necessário para pydub).
 
-> ⚠️ pyannote.audio + torch requerem pelo menos **2GB RAM**. Cloud Run Starter suporta até 4GB.
+> ✅ Sem pyannote/torch, o backend requer apenas **~200MB RAM** e roda em qualquer free tier.
 
 ### Frontend
 ```
@@ -513,14 +518,16 @@ Consultar `DEPLOY.md` para guia completo de deploy (Netlify + Cloud Run + Fireba
 - ✅ Sprint 2 — Diarização pyannote (MÉDICO/PACIENTE)
 - ✅ Sprint 3 — Summarização GPT-4o → campos HDA estruturados
 - ✅ Sprint 4 — Firebase Firestore + sessões + ownership check + LGPD delete
+- ✅ Sprint 5 — **Migração Deepgram Nova-2** (transcrição + diarização unificada, -4.5GB deps)
 
 ---
 
 ## Pontos de Atenção para Curadoria
 
-1. **Porta dev no AGENTS.md** — WHISPER frontend deveria ser `5179` e backend `8003` (e não 5174/8001 como estava documentado)
-2. **CORS backend** — lista de origens inclui `localhost:5174` mas a porta convencionada é `5179`
-3. **EXTRA_ALLOWED_ORIGINS** no `render.yaml` está vazio — precisa ser preenchido com URLs de produção
-4. **HUGGINGFACE_TOKEN** não está no `render.yaml` — precisa ser adicionado manualmente no painel
-5. **Consentimento LGPD** — `ConsentBanner` usa `localStorage` para lembrar o consentimento; para compliance total, considerar armazenar no Firestore
+1. **Deploy pendente** — Backend precisa ser deploiado no Google Cloud Run (Render descontinuado)
+2. **DEEPGRAM_API_KEY** — configurar no Cloud Run antes do primeiro teste
+3. **Frontend URL** — após deploy Cloud Run, atualizar `VITE_API_URL` no frontend
+4. **Programa Startups Deepgram** — aplicar para $100k/ano em créditos (ver `DEEPGRAM_MIGRATION.md`)
+5. **Consentimento LGPD** — `ConsentBanner` usa `localStorage`; para compliance total, considerar Firestore
 6. **getDoctorId()** no frontend usa `?doctorId` da URL como fallback → `'demo-doctor'` — em produção depende do postMessage do PWA Shell para token real
+7. **Arquivos backup** — `whisper_service.py` e `diarization_service.py` mantidos como referência, não importados
