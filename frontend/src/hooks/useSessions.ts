@@ -15,7 +15,7 @@ export function useSessions(): UseSessionsReturn {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchSessions = useCallback(async (doctorId: string) => {
+  const fetchSessions = useCallback(async (_doctorId: string) => {
     setIsLoading(true)
     setError(null)
     try {
