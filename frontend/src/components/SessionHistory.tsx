@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Clock, Trash2, ChevronRight, Loader2 } from 'lucide-react'
+import { Clock, Trash2, ChevronRight } from 'lucide-react'
+import { SkeletonList } from './Skeleton'
 import { useSessions } from '../hooks/useSessions'
 import type { WhisperSession } from '../types/whisper'
 
@@ -29,12 +30,7 @@ export default function SessionHistory({ doctorId, onSelect }: SessionHistoryPro
   }, [doctorId, fetchSessions])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-8 text-otto-muted gap-2 text-sm">
-        <Loader2 size={16} className="animate-spin" />
-        Carregando histórico...
-      </div>
-    )
+    return <SkeletonList items={3} className="py-4" />
   }
 
   if (error) {
