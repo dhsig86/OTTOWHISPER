@@ -380,6 +380,28 @@ ALLOWED_ORIGINS = [
 
 ## postMessage API (PWA Shell Integration)
 
+### Origin Validation (Sprint 2026-06-05)
+Todas as mensagens `postMessage` recebidas são validadas contra uma allowlist explícita de origens antes de serem processadas:
+
+```typescript
+const ALLOWED_ORIGINS = [
+  'https://otto.drdariohart.com',
+  'https://ottopwa.vercel.app',
+  'https://ottos-plum.vercel.app',
+  'http://localhost:5173',
+];
+
+// Receber — App.tsx message handler:
+if (!ALLOWED_ORIGINS.includes(event.origin)) return;
+
+// Enviar — ready signal:
+ALLOWED_ORIGINS.forEach(origin => {
+  try { window.parent.postMessage({ type: 'otto-whisper-ready' }, origin); } catch {}
+});
+```
+
+> ⚠️ **Regra de segurança:** NUNCA usar `'*'` como targetOrigin em `postMessage`. Sempre validar `event.origin` contra `ALLOWED_ORIGINS`.
+
 ### Recebe do PWA Shell:
 ```json
 {
@@ -534,3 +556,11 @@ Consultar `DEPLOY.md` para guia completo de deploy (Netlify + Cloud Run + Fireba
 7. **`getDoctorId()` fallback** — Frontend usa `'demo-doctor'` como fallback — em produção depende do postMessage do PWA Shell para token real
 8. **Testes Automatizados:** Suíte de testes configurada com Pytest no backend (mocks de API Deepgram, OpenAI e rotas FastAPI) e Vitest no frontend (ConsentBanner e ProgressBar).
 9. **`doctor_id` no FormData** — `useTranscription.ts` envia `doctor_id` no FormData mas backend ignora (usa token Firebase) — dead code
+
+---
+
+## Changelog
+
+| Data | Mudança | Commit |
+|------|---------|--------|
+| 2026-06-05 | `App.tsx` — postMessage origin validation com ALLOWED_ORIGINS adicionada | `8f29e51` |
