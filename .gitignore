@@ -19,6 +19,7 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+*.stackdump
 
 # Áudio — nunca commitar gravações de pacientes
 *.webm

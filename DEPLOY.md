@@ -88,7 +88,7 @@ gcloud run services update otto-whisper-api \
 
 ### Após o deploy
 - Anote a URL do Cloud Run (ex: `https://otto-whisper-api-xxxx.run.app`)
-- Volte ao Vercel e configure `VITE_API_URL = https://otto-whisper-api-xxxx.run.app/api`
+- Volte ao Netlify e configure `VITE_API_URL = https://otto-whisper-api-xxxx.run.app/api`
 - Atualize `ALLOWED_ORIGINS` no `main.py` com a URL real do Vercel (ou use `EXTRA_ALLOWED_ORIGINS`)
 
 ---
@@ -125,7 +125,7 @@ Em `OTTO PWA/otto-pwa/src/config/modules.ts`, o módulo `whisper` já está regi
 
 - [ ] Git push para `dhsig86/OTTOWHISPER`
 - [ ] Frontend no Vercel com `VITE_API_URL` configurado
-- [ ] Cloud Run deployado com memória 2GB+
+- [ ] Cloud Run deployado com memória 512Mi
 - [ ] Variáveis de ambiente configuradas no Cloud Run
 - [ ] Firebase Firestore com coleção e índice criados
 - [ ] HuggingFace token configurado

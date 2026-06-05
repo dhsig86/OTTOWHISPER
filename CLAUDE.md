@@ -1,6 +1,6 @@
 # OTTO WHISPER — CLAUDE.md
 
-> Contexto operacional para agentes LLM. Atualizado: 2026-05-29. Versão 1.0.0 (Deepgram Nova-2).
+> Contexto operacional para agentes LLM. Atualizado: 2026-06-03. Versão 1.0.0 (Deepgram Nova-2).
 
 ---
 
@@ -42,6 +42,7 @@ python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activa
 pip install -r requirements.txt
 cp .env.example .env   # preencher DEEPGRAM_API_KEY, OPENAI_API_KEY
 uvicorn main:app --reload --port 8003
+python -m pytest tests/                           # Executar testes unitários (Pytest)
 ```
 
 ### Frontend
@@ -52,6 +53,7 @@ cp .env.example .env   # ajustar VITE_API_URL=http://localhost:8003/api
 npm run dev            # → http://localhost:5179
 npm run build          # tsc && vite build
 npm run lint           # eslint src --ext ts,tsx
+npm run test           # Executar testes unitários (Vitest)
 ```
 
 ---
@@ -64,8 +66,7 @@ OTTO WHISPER/
 │   ├── main.py                              ← FastAPI v1.0.0: CORS, middleware CSP, todas as rotas
 │   ├── services/
 │   │   ├── deepgram_service.py              ← transcribe_and_diarize() via Deepgram Nova-2 (PRINCIPAL)
-│   │   ├── whisper_service.py               ← [BACKUP] transcrição OpenAI Whisper (não importado)
-│   │   ├── diarization_service.py           ← [BACKUP] diarização pyannote (não importado)
+│   │   ├── orl_lexicon.py                   ← Vocabulário ORL para enriquecimento de transcrição
 │   │   └── summary_service.py               ← summarize_transcript() via GPT-4o
 │   ├── models/
 │   │   └── schemas.py                       ← Pydantic: Speaker enum, TranscriptSegment, ClinicalSummary,
@@ -73,9 +74,10 @@ OTTO WHISPER/
 │   ├── middleware/
 │   │   └── require_auth.py                  ← verify_firebase_token() — GOOGLE_APPLICATION_CREDENTIALS
 │   ├── firebase_db.py                       ← Firestore CRUD: save/get/list/delete session
+│   ├── data/
+│   │   └── orl_vocabulary.json              ← Léxico ORL (34 KB)
 │   ├── Dockerfile                           ← python:3.11-slim + ffmpeg
-│   ├── render.yaml                          ← Config Render (starter plan, Docker)
-│   ├── requirements.txt                     ← 12 deps (fastapi, openai, pyannote, torch, firebase-admin)
+│   ├── requirements.txt                     ← 8 deps (todas pinadas)
 │   └── .env.example
 ├── frontend/
 │   ├── src/
@@ -88,7 +90,8 @@ OTTO WHISPER/
 │   │   │   ├── ExportBar.tsx                ← Exportação (copiar, download)
 │   │   │   ├── ProgressBar.tsx              ← Barra de progresso SSE
 │   │   │   ├── SessionHistory.tsx           ← Lista de sessões anteriores
-│   │   │   └── ConsentBanner.tsx            ← Consentimento LGPD para gravação
+│   │   │   ├── ConsentBanner.tsx            ← Consentimento LGPD para gravação
+│   │   │   └── Skeleton.tsx                ← Loading skeleton placeholder
 │   │   ├── hooks/
 │   │   │   ├── useRecorder.ts               ← MediaRecorder + chunk management
 │   │   │   ├── useTranscription.ts          ← SSE stream + fetch transcribe/summarize
@@ -102,8 +105,7 @@ OTTO WHISPER/
 │   ├── package.json                         ← React 18 + Vite + Tailwind + Axios + lucide-react
 │   └── tailwind.config.js
 ├── DEPLOY.md                                ← Guia completo de deploy (Netlify + Cloud Run + Firebase)
-├── PLANO_OTTO_WHISPER.md                    ← Planejamento de sprints
-└── netlify.toml                             ← Config raiz Netlify (duplicata do frontend)
+└── PLANO_OTTO_WHISPER.md                    ← Planejamento de sprints
 ```
 
 ---
@@ -111,7 +113,7 @@ OTTO WHISPER/
 ## API — Endpoints
 
 ### `GET /health`
-Health check. Retorna `{ "status": "ok", "service": "otto-whisper", "version": "0.2.0" }`.
+Health check. Retorna `{ "status": "ok", "service": "otto-whisper", "version": "1.0.0" }`.
 
 ---
 
@@ -308,9 +310,7 @@ class WhisperSession(BaseModel):
 │  POST /api/transcribe/stream                                    │
 │  ├─ verify_firebase_token() → doctor_id (uid)                   │
 │  ├─ normalize_audio() → converte 3GP/AMR → MP3                  │
-│  ├─ Whisper API (whisper-1) → segmentos + timestamps            │
-│  │   └─ Se > 25MB: chunking em blocos de 23MB                  │
-│  ├─ pyannote.audio → diarização → MÉDICO/PACIENTE              │
+│  ├─ Deepgram Nova-2 (chamada única) → transcrição + diarização  │
 │  │   └─ Regra: quem fala primeiro = MÉDICO                     │
 │  ├─ merge_consecutive_speaker() → blocos contíguos              │
 │  ├─ build_full_transcript() → texto corrido                     │
@@ -325,18 +325,18 @@ class WhisperSession(BaseModel):
 
 ---
 
-## Serviço de Diarização — Detalhes
+## Serviço de Diarização — Deepgram Nova-2
 
 ### Estratégia de Atribuição de Papéis
 - O speaker que aparece primeiro na timeline → **MÉDICO** (quem abre a consulta)
 - O segundo speaker → **PACIENTE**
 - Speakers adicionais → **DESCONHECIDO**
 
-### Alinhamento Whisper ↔ pyannote
-Para cada segmento Whisper, usa o **ponto médio do timestamp** (`(start + end) / 2`) para consultar qual speaker estava ativo naquele instante no resultado da diarização.
+### Chamada Única
+Deepgram Nova-2 fornece transcrição + diarização em uma única chamada de API, substituindo a pipeline anterior de Whisper API + pyannote.audio.
 
 ### Graceful Degradation
-Se `pyannote.audio` não estiver instalado ou `HUGGINGFACE_TOKEN` não configurado → diarização é pulada silenciosamente, todos os segmentos ficam como `DESCONHECIDO`.
+Se `DEEPGRAM_API_KEY` não estiver configurado → transcreverá sem diarização, todos os segmentos ficam como `DESCONHECIDO`.
 
 ---
 
@@ -356,7 +356,7 @@ Se `pyannote.audio` não estiver instalado ou `HUGGINGFACE_TOKEN` não configura
 Allowlist explícita (NÃO usa `*`):
 ```python
 ALLOWED_ORIGINS = [
-    "http://localhost:5174",
+    "http://localhost:5179",
     "http://localhost:5173",
     "https://otto-whisper.netlify.app",
     "https://otto.drdariohart.com",
@@ -491,9 +491,10 @@ vite@5.3.1                       ← Build tool
 | `ExportBar` | Copiar para clipboard, download |
 | `SessionHistory` | Lista de sessões anteriores do médico |
 | `ConsentBanner` | Consentimento LGPD antes de iniciar gravação |
+| `Skeleton` | Loading skeleton placeholder durante carregamento |
 
 ### Persistência local
-- Auto-save em `localStorage` (`otto_whisper_draft`) — rascunho da sessão atual
+- Auto-save em `sessionStorage` (consentimento LGPD) e `localStorage` (`otto_whisper_draft` — rascunho da sessão atual)
 - Carregamento automático do rascunho ao abrir o app
 
 ---
@@ -527,7 +528,9 @@ Consultar `DEPLOY.md` para guia completo de deploy (Netlify + Cloud Run + Fireba
 1. **Deploy pendente** — Backend precisa ser deploiado no Google Cloud Run (Render descontinuado)
 2. **DEEPGRAM_API_KEY** — configurar no Cloud Run antes do primeiro teste
 3. **Frontend URL** — após deploy Cloud Run, atualizar `VITE_API_URL` no frontend
-4. **Programa Startups Deepgram** — aplicar para $100k/ano em créditos (ver `DEEPGRAM_MIGRATION.md`)
-5. **Consentimento LGPD** — `ConsentBanner` usa `localStorage`; para compliance total, considerar Firestore
-6. **getDoctorId()** no frontend usa `?doctorId` da URL como fallback → `'demo-doctor'` — em produção depende do postMessage do PWA Shell para token real
-7. **Arquivos backup** — `whisper_service.py` e `diarization_service.py` mantidos como referência, não importados
+4. ~~**Debris e código morto**~~ — ✅ Resolvido: removidos `whisper_service.py`, `diarization_service.py`, `render.yaml`, `grep.exe.stackdump`, `dist/`, `netlify.toml` raíz
+5. ~~**Portas dev incorretas**~~ — ✅ Corrigido: vite.config.ts agora usa 5179/8003 (convenção AGENTS.md)
+6. **Consentimento LGPD** — `ConsentBanner` usa `sessionStorage`; para compliance total, considerar Firestore
+7. **`getDoctorId()` fallback** — Frontend usa `'demo-doctor'` como fallback — em produção depende do postMessage do PWA Shell para token real
+8. **Testes Automatizados:** Suíte de testes configurada com Pytest no backend (mocks de API Deepgram, OpenAI e rotas FastAPI) e Vitest no frontend (ConsentBanner e ProgressBar).
+9. **`doctor_id` no FormData** — `useTranscription.ts` envia `doctor_id` no FormData mas backend ignora (usa token Firebase) — dead code
