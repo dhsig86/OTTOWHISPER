@@ -58,16 +58,16 @@ gcloud config set project SEU-PROJETO-FIREBASE
 # Build e deploy direto do repositório
 gcloud run deploy otto-whisper-api \
   --source ./backend \
-  --region us-central1 \
+  --region southamerica-east1 \
   --platform managed \
   --allow-unauthenticated \
-  --memory 2Gi \
-  --cpu 2 \
+  --memory 512Mi \
+  --cpu 1 \
   --timeout 300 \
-  --set-env-vars OPENAI_API_KEY="sua-chave",HUGGINGFACE_TOKEN="hf_...",EXTRA_ALLOWED_ORIGINS="https://otto-whisper.vercel.app"
+  --set-env-vars OPENAI_API_KEY="sua-chave",DEEPGRAM_API_KEY="sua-chave",EXTRA_ALLOWED_ORIGINS="https://otto-whisper.vercel.app"
 ```
 
-> **Nota sobre memória:** pyannote.audio precisa de pelo menos 2GB RAM. Cloud Run Starter suporta até 4GB.
+> **Nota sobre memória:** Após a migração para o Deepgram Nova-2 (chamada única de diarização e transcrição na nuvem), o consumo do backend caiu drasticamente para cerca de 200MB de RAM. Com isso, os deploys podem ser feitos de forma ultra econômica com **512Mi** de RAM e **1 CPU**.
 
 ### Configurar credencial Firebase no Cloud Run
 
