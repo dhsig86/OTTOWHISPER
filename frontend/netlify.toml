@@ -17,6 +17,6 @@
   for = "/*"
   [headers.values]
     X-Frame-Options = "ALLOW-FROM https://otto.drdariohart.com"
-    Content-Security-Policy = "frame-ancestors 'self' https://otto.drdariohart.com https://ottopwa.vercel.app"
+    Content-Security-Policy = "frame-ancestors 'self' https://otto.drdariohart.com https://ottopwa.vercel.app https://ottos-plum.vercel.app"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
