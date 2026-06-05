@@ -24,7 +24,15 @@ type InputMode = 'record' | 'upload'
 export default function App() {
   // Listen for parent token injection (PWA Shell integration)
   useEffect(() => {
+    const ALLOWED_ORIGINS = [
+      'https://otto.drdariohart.com',
+      'https://ottopwa.vercel.app',
+      'https://ottos-plum.vercel.app',
+      'http://localhost:5173',
+    ]
     const handleMessage = (e: MessageEvent) => {
+      // SEC: Validar origin antes de aceitar contexto
+      if (!ALLOWED_ORIGINS.includes(e.origin)) return
       if (e.data?.type === 'otto-context') {
         const token = e.data?.payload?.firebaseToken
         if (token) {
@@ -35,7 +43,9 @@ export default function App() {
     window.addEventListener('message', handleMessage)
     
     // Notify parent shell that we are ready to receive context
-    window.parent.postMessage({ type: 'otto-whisper-ready' }, '*')
+    ALLOWED_ORIGINS.forEach(origin => {
+      try { window.parent.postMessage({ type: 'otto-whisper-ready' }, origin) } catch {}
+    })
     
     return () => {
       window.removeEventListener('message', handleMessage)
