@@ -43,6 +43,7 @@ ALLOWED_ORIGINS = [
     "https://otto-whisper.netlify.app",
     "https://otto.drdariohart.com",
     "https://ottopwa.vercel.app",
+    "https://ottos-plum.vercel.app",
 ]
 extra = os.environ.get("EXTRA_ALLOWED_ORIGINS", "")
 if extra:
@@ -63,7 +64,7 @@ async def add_iframe_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Frame-Options"] = "ALLOW-FROM https://ottopwa.vercel.app"
     response.headers["Content-Security-Policy"] = (
-        "frame-ancestors 'self' https://otto.drdariohart.com https://ottopwa.vercel.app"
+        "frame-ancestors 'self' https://otto.drdariohart.com https://ottopwa.vercel.app https://ottos-plum.vercel.app"
     )
     return response
 
