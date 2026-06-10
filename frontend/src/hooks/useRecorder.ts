@@ -31,6 +31,7 @@ export function useRecorder(): UseRecorderReturn {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
   const allChunksRef = useRef<Blob[]>([])        // todos os chunks finais (após auto-split)
   const currentChunksRef = useRef<Blob[]>([])    // chunks do segmento atual
   const currentSizeRef = useRef<number>(0)        // bytes acumulados no segmento atual
@@ -150,6 +151,13 @@ export function useRecorder(): UseRecorderReturn {
     setAudioBlob(finalBlob)
     streamRef.current?.getTracks().forEach(t => t.stop())
     streamRef.current = null
+    
+    // Fecha AudioContext para liberar hardware de áudio do sistema
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close().catch(() => {})
+      audioContextRef.current = null
+    }
+    
     releaseWakeLock()
   }, [releaseWakeLock])
 
@@ -174,6 +182,37 @@ export function useRecorder(): UseRecorderReturn {
       })
       streamRef.current = stream
 
+      // Pipeline Web Audio API: Aplica filtro passa-alta e ganho digital
+      let processedStream = stream
+      try {
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+        if (AudioContextClass) {
+          const audioCtx = new AudioContextClass()
+          audioContextRef.current = audioCtx
+          const source = audioCtx.createMediaStreamSource(stream)
+
+          // 1. Filtro Passa-Alta (Corta frequências graves < 100Hz do ambiente)
+          const filter = audioCtx.createBiquadFilter()
+          filter.type = 'highpass'
+          filter.frequency.value = 100
+
+          // 2. Ganho Digital (Amplifica vozes sussurradas em 1.5x)
+          const gainNode = audioCtx.createGain()
+          gainNode.gain.value = 1.5
+
+          // 3. Destino do stream processado
+          const destination = audioCtx.createMediaStreamDestination()
+
+          source.connect(filter)
+          filter.connect(gainNode)
+          gainNode.connect(destination)
+
+          processedStream = destination.stream
+        }
+      } catch (audioErr) {
+        console.warn('Falha ao iniciar Web Audio API para pré-filtro. Usando microfone direto.', audioErr)
+      }
+
       const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
         ? 'audio/webm;codecs=opus'
         : MediaRecorder.isTypeSupported('audio/webm')
@@ -182,7 +221,7 @@ export function useRecorder(): UseRecorderReturn {
       mimeTypeRef.current = mime
 
       await requestWakeLock()
-      startSegment(stream, mime)
+      startSegment(processedStream, mime)
       setState('recording')
       startTimer()
     } catch (err) {
@@ -228,6 +267,13 @@ export function useRecorder(): UseRecorderReturn {
     currentSizeRef.current = 0
     accumulatedRef.current = 0
     isStoppingRef.current = false
+    
+    // Fecha AudioContext no reset
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close().catch(() => {})
+      audioContextRef.current = null
+    }
+    
     releaseWakeLock()
     setState('idle')
     setElapsedSeconds(0)

@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import ConsentBanner from './ConsentBanner'
-import React from 'react'
+
 
 describe('ConsentBanner Component', () => {
   test('deve renderizar o aviso de privacidade e chamar onConfirm ao clicar no botao', () => {

@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 import pytest
+import os
 from unittest.mock import MagicMock, patch
 from main import app
 from middleware.require_auth import verify_firebase_token
@@ -10,11 +11,11 @@ client = TestClient(app)
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {
-        "status": "ok",
-        "service": "otto-whisper",
-        "version": "1.0.0"
-    }
+    res_json = response.json()
+    assert res_json["status"] == "ok"
+    assert res_json["service"] == "otto-whisper"
+    assert res_json["version"] == "1.0.0"
+    assert "deepgramActive" in res_json
 
 @patch('main.get_session')
 def test_get_session_not_found(mock_get_session):
@@ -79,3 +80,19 @@ def test_summarize_endpoint(mock_summarize):
     assert res_data["summary"]["queixa_principal"] == "Dor de ouvido"
     assert res_data["cid_sugerido"] == "H60.9"
     assert res_data["tokens_used"] == 150
+
+def test_transcribe_deepgram_unauthorized_without_partnership():
+    app.dependency_overrides[verify_firebase_token] = lambda: "doc-123"
+    
+    # Simula arquivo de áudio de teste
+    audio_data = b"x" * 2000
+    files = {"audio_file": ("test.webm", audio_data, "audio/webm")}
+    data = {"engine": "deepgram", "language": "pt"}
+    
+    with patch.dict(os.environ, {"DEEPGRAM_PARTNERSHIP_ACTIVE": "false"}):
+        response = client.post("/api/transcribe", files=files, data=data)
+        
+    app.dependency_overrides.clear()
+    
+    assert response.status_code == 403
+    assert "aguarda liberação de patrocínio" in response.json()["detail"]

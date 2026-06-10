@@ -10,7 +10,7 @@ export interface TranscribeProgress {
 }
 
 interface UseTranscriptionReturn {
-  transcribeAudio: (blob: Blob, doctorId: string, patientId?: string) => Promise<TranscribeResponse | null>
+  transcribeAudio: (blob: Blob, doctorId: string, patientId?: string, engine?: string) => Promise<TranscribeResponse | null>
   summarize: (sessionId: string, transcript: string) => Promise<SummarizeResponse | null>
   isTranscribing: boolean
   isSummarizing: boolean
@@ -46,6 +46,7 @@ export function useTranscription(): UseTranscriptionReturn {
     blob: Blob,
     doctorId: string,
     patientId?: string,
+    engine: string = 'whisper',
   ): Promise<TranscribeResponse | null> => {
     setIsTranscribing(true)
     setTranscribeError(null)
@@ -63,6 +64,7 @@ export function useTranscription(): UseTranscriptionReturn {
     formData.append('doctor_id', doctorId)
     if (patientId) formData.append('patient_id', patientId)
     formData.append('language', 'pt')
+    formData.append('engine', engine)
 
     try {
       const token = getAuthToken()

@@ -20,6 +20,7 @@ import httpx
 
 from models.schemas import TranscriptSegment, Speaker
 from services.orl_lexicon import get_orl_keywords_for_deepgram
+from services.audio_utils import should_chunk_audio, chunk_audio_to_mp3
 
 logger = logging.getLogger(__name__)
 
@@ -184,9 +185,6 @@ def _parse_deepgram_response(response_json: dict) -> tuple[List[TranscriptSegmen
                 )
                 logger.warning("Utterances não disponíveis — usando transcript completo sem diarização")
 
-    return segments, duration
-
-
 async def transcribe_and_diarize(
     audio_bytes: bytes,
     filename: str,
@@ -194,12 +192,45 @@ async def transcribe_and_diarize(
 ) -> tuple[List[TranscriptSegment], float]:
     """
     Transcreve e diariza áudio usando Deepgram Nova-2 em uma única chamada API.
+    Suporta fatiamento automático (chunking) se o áudio exceder 20MB.
     Retorna (segments, duration_seconds).
+    """
+    # Verifica se deve fatiar o áudio
+    if should_chunk_audio(audio_bytes):
+        logger.info(f"[Deepgram Nova-2] Áudio excede 20MB. Fatiando sequencialmente...")
+        chunks = chunk_audio_to_mp3(audio_bytes, filename)
+        
+        all_segments: List[TranscriptSegment] = []
+        total_duration = 0.0
+        
+        for chunk_bytes, chunk_filename, offset_seconds in chunks:
+            logger.info(f"[Deepgram Nova-2] Processando chunk {chunk_filename} (offset={offset_seconds:.1f}s)...")
+            try:
+                # Chama a si mesmo recursivamente para processar o chunk sem fatiar novamente
+                chunk_segments, chunk_duration = await _transcribe_single_chunk(chunk_bytes, chunk_filename, language)
+                
+                # Ajusta as timestamps dos segmentos do chunk
+                for seg in chunk_segments:
+                    seg.start += offset_seconds
+                    seg.end += offset_seconds
+                    all_segments.append(seg)
+                    
+                total_duration = max(total_duration, offset_seconds + chunk_duration)
+            except Exception as e:
+                logger.error(f"[Deepgram Nova-2] Erro no processamento do chunk {chunk_filename}: {e}")
+                
+        return all_segments, total_duration
 
-    O Deepgram faz transcrição + diarização simultaneamente, ao contrário
-    da abordagem anterior (Whisper transcrição + pyannote diarização separados).
+    return await _transcribe_single_chunk(audio_bytes, filename, language)
 
-    Lida com formatos móveis (3GP/AMR) via pydub antes de enviar.
+
+async def _transcribe_single_chunk(
+    audio_bytes: bytes,
+    filename: str,
+    language: str = "pt",
+) -> tuple[List[TranscriptSegment], float]:
+    """
+    Processamento de um único chunk de áudio (tamanho seguro) na API do Deepgram.
     """
     api_key = _get_deepgram_api_key()
 

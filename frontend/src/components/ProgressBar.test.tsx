@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import ProgressBar from './ProgressBar'
-import React from 'react'
+
 
 describe('ProgressBar Component', () => {
   test('deve renderizar a mensagem e porcentagem de progresso', () => {

@@ -72,7 +72,13 @@ async def add_iframe_headers(request: Request, call_next):
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "otto-whisper", "version": "1.0.0"}
+    deepgram_active = os.environ.get("DEEPGRAM_PARTNERSHIP_ACTIVE", "false").lower() == "true"
+    return {
+        "status": "ok",
+        "service": "otto-whisper",
+        "version": "1.0.0",
+        "deepgramActive": deepgram_active
+    }
 
 # ─── Helpers SSE ─────────────────────────────────────────────────────────────
 
@@ -87,6 +93,7 @@ async def _process_audio_stream(
     doctor_id: str,
     patient_id: str | None,
     language: str,
+    engine: str = "whisper",
 ) -> AsyncGenerator[str, None]:
     """
     Generator SSE que emite eventos de progresso enquanto processa o áudio.
@@ -101,21 +108,25 @@ async def _process_audio_stream(
 
     try:
         size_mb = len(audio_bytes) / (1024 * 1024)
-        logger.info(f"[STREAM] Iniciando: arquivo={filename} tamanho={size_mb:.1f}MB doctor={doctor_id}")
-        print(f"[STREAM] Iniciando: arquivo={filename} tamanho={size_mb:.1f}MB", flush=True)
+        logger.info(f"[STREAM] Iniciando ({engine}): arquivo={filename} tamanho={size_mb:.1f}MB doctor={doctor_id}")
+        print(f"[STREAM] Iniciando ({engine}): arquivo={filename} tamanho={size_mb:.1f}MB", flush=True)
 
         yield progress("iniciando", 5, "Iniciando processamento...")
 
         if len(audio_bytes) == 0:
             raise ValueError("Arquivo de áudio vazio — nenhum dado recebido")
 
-        # Etapa 1: Transcrição + diarização via Deepgram Nova-2 (chamada única)
-        yield progress("processando", 15, "Processando áudio com Deepgram Nova-2...")
-        print(f"[STREAM] Chamando Deepgram para {filename}...", flush=True)
+        # Etapa 1: Transcrição + diarização via motor selecionado
+        yield progress("processando", 15, f"Processando áudio com {engine.upper()}...")
+        print(f"[STREAM] Chamando {engine} para {filename}...", flush=True)
 
-        segments, duration = await transcribe_and_diarize(audio_bytes, filename, language)
+        if engine == "deepgram":
+            segments, duration = await transcribe_and_diarize(audio_bytes, filename, language)
+        else:
+            from services.whisper_service import transcribe_with_whisper
+            segments, duration = await transcribe_with_whisper(audio_bytes, filename, language)
 
-        print(f"[STREAM] Deepgram OK: {len(segments)} segmentos, {duration:.1f}s", flush=True)
+        print(f"[STREAM] {engine.upper()} OK: {len(segments)} segmentos, {duration:.1f}s", flush=True)
 
         # Etapa 2: Mesclar segmentos consecutivos do mesmo falante
         yield progress("mesclando", 80, "Mesclando blocos de fala...")
@@ -165,22 +176,39 @@ async def transcribe_endpoint(
     audio_file: UploadFile = File(...),
     patient_id: str = Form(None),
     language: str = Form("pt"),
+    engine: str = Form("whisper"),  # whisper (V1) ou deepgram (V2)
     doctor_id: str = Depends(verify_firebase_token),  # ACT-17: uid do Firebase Auth
 ):
+    if engine == "deepgram":
+        deepgram_active = os.environ.get("DEEPGRAM_PARTNERSHIP_ACTIVE", "false").lower() == "true"
+        if not deepgram_active:
+            raise HTTPException(
+                status_code=403,
+                detail="O motor Deepgram V2 (Diarização) aguarda liberação de patrocínio de startup."
+            )
+
     audio_bytes = await audio_file.read()
     if len(audio_bytes) < 1000:
         raise HTTPException(status_code=400, detail="Arquivo de áudio vazio ou muito pequeno")
 
     try:
-        segments, duration = await transcribe_and_diarize(
-            audio_bytes=audio_bytes,
-            filename=audio_file.filename or "consulta.webm",
-            language=language,
-        )
+        if engine == "deepgram":
+            segments, duration = await transcribe_and_diarize(
+                audio_bytes=audio_bytes,
+                filename=audio_file.filename or "consulta.webm",
+                language=language,
+            )
+        else:
+            from services.whisper_service import transcribe_with_whisper
+            segments, duration = await transcribe_with_whisper(
+                audio_bytes=audio_bytes,
+                filename=audio_file.filename or "consulta.webm",
+                language=language,
+            )
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Erro Deepgram: {str(e)}")
+        raise HTTPException(status_code=502, detail=f"Erro de processamento: {str(e)}")
 
     segments = merge_consecutive_speaker(segments)
     full_transcript = build_full_transcript(segments)
@@ -214,6 +242,7 @@ async def transcribe_stream_endpoint(
     audio_file: UploadFile = File(...),
     patient_id: str = Form(None),
     language: str = Form("pt"),
+    engine: str = Form("whisper"),  # whisper (V1) ou deepgram (V2)
     doctor_id: str = Depends(verify_firebase_token),  # ACT-17: uid do Firebase Auth
 ):
     """
@@ -221,6 +250,14 @@ async def transcribe_stream_endpoint(
     Emite eventos de progresso enquanto processa.
     Útil para consultas longas onde o usuário precisa de feedback visual.
     """
+    if engine == "deepgram":
+        deepgram_active = os.environ.get("DEEPGRAM_PARTNERSHIP_ACTIVE", "false").lower() == "true"
+        if not deepgram_active:
+            raise HTTPException(
+                status_code=403,
+                detail="O motor Deepgram V2 (Diarização) aguarda liberação de patrocínio de startup."
+            )
+
     audio_bytes = await audio_file.read()
     if len(audio_bytes) < 1000:
         raise HTTPException(status_code=400, detail="Arquivo de áudio muito pequeno")
@@ -232,6 +269,7 @@ async def transcribe_stream_endpoint(
             doctor_id=doctor_id,
             patient_id=patient_id,
             language=language,
+            engine=engine,
         ),
         media_type="text/event-stream",
         headers={

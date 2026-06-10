@@ -22,6 +22,27 @@ import { setAuthToken } from './services/api'
 type InputMode = 'record' | 'upload'
 
 export default function App() {
+  const [engine, setEngine] = useState<'whisper' | 'deepgram'>('whisper')
+  const [isDeepgramAvailable, setIsDeepgramAvailable] = useState(false)
+
+  // Consulta o backend para ver se o patrocínio do Deepgram está ativo
+  useEffect(() => {
+    const checkDeepgramStatus = async () => {
+      try {
+        const API_BASE = import.meta.env.VITE_API_URL ?? '/api'
+        const healthUrl = API_BASE.endsWith('/api') ? API_BASE.slice(0, -4) + '/health' : '/health'
+        const res = await fetch(healthUrl)
+        if (res.ok) {
+          const data = await res.json()
+          setIsDeepgramAvailable(Boolean(data.deepgramActive))
+        }
+      } catch (e) {
+        console.warn('Erro ao consultar status do Deepgram', e)
+      }
+    }
+    checkDeepgramStatus()
+  }, [])
+
   // Listen for parent token injection (PWA Shell integration)
   useEffect(() => {
     const ALLOWED_ORIGINS = [
@@ -103,7 +124,7 @@ export default function App() {
     const run = async () => {
       setApiError(null)
 
-      const result = await transcription.transcribeAudio(recorder.audioBlob!, doctorId)
+      const result = await transcription.transcribeAudio(recorder.audioBlob!, doctorId, undefined, engine)
       if (!result) {
         setApiError(transcription.transcribeError ?? 'Erro na transcrição')
         return
@@ -120,7 +141,7 @@ export default function App() {
     }
 
     run()
-  }, [recorder.state, recorder.audioBlob]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [recorder.state, recorder.audioBlob, engine]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Carrega sessão histórica
   const loadSession = (session: WhisperSession) => {
@@ -153,7 +174,7 @@ export default function App() {
 
     // Cria um File com o nome original para o backend identificar o formato
     const file = new File([blob], filename, { type: blob.type || 'audio/mpeg' })
-    const result = await transcription.transcribeAudio(file, doctorId)
+    const result = await transcription.transcribeAudio(file, doctorId, undefined, engine)
     if (!result) {
       setApiError(transcription.transcribeError ?? 'Erro na transcrição do arquivo')
       return
@@ -256,6 +277,53 @@ export default function App() {
                   <Upload size={13} />
                   Enviar arquivo
                 </button>
+              </div>
+            )}
+
+            {/* Seletor de Motor de Transcrição */}
+            {!isDone && !isProcessing && recorder.state === 'idle' && (
+              <div className="bg-white border border-otto-border rounded-xl p-3.5 space-y-2.5">
+                <div className="text-xs font-bold text-otto-text">Tecnologia de Transcrição:</div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEngine('whisper')}
+                    className={`flex-1 text-center py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
+                      engine === 'whisper'
+                        ? 'border-otto-primary bg-otto-primary/5 text-otto-primary'
+                        : 'border-otto-border text-otto-muted hover:text-otto-dark hover:bg-otto-light'
+                    }`}
+                  >
+                    Whisper V1 (OpenAI)
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!isDeepgramAvailable}
+                    onClick={() => {
+                      if (isDeepgramAvailable) setEngine('deepgram')
+                    }}
+                    className={`flex-1 flex items-center justify-center gap-1.5 text-center py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
+                      !isDeepgramAvailable
+                        ? 'border-dashed border-otto-border bg-gray-50 text-gray-400 cursor-not-allowed'
+                        : engine === 'deepgram'
+                        ? 'border-otto-primary bg-otto-primary/5 text-otto-primary'
+                        : 'border-otto-border text-otto-muted hover:text-otto-dark hover:bg-otto-light'
+                    }`}
+                    title={!isDeepgramAvailable ? 'Aguardando parceria de startup com o Deepgram' : 'Deepgram Nova-2 com diarização médico/paciente'}
+                  >
+                    Deepgram V2
+                    {!isDeepgramAvailable && (
+                      <span className="text-[0.55rem] bg-amber-100 text-amber-800 px-1 py-0.5 rounded font-black tracking-wider leading-none">
+                        Pendente
+                      </span>
+                    )}
+                  </button>
+                </div>
+                {!isDeepgramAvailable && (
+                  <p className="text-[0.65rem] text-otto-muted leading-snug m-0">
+                    * O motor Deepgram V2 (com diarização) está indisponível temporariamente, aguardando liberação do patrocínio de startup.
+                  </p>
+                )}
               </div>
             )}
 
